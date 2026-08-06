@@ -8,6 +8,8 @@ Projekt je v prípravnej fáze. Rozsah, odporúčaná architektúra a konkrétne
 
 Vizuálny smer, pracovná farebná paleta, štruktúra domovskej stránky a evidencia dodaných podkladov sú zdokumentované v súbore [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md).
 
+Databázový projekt, prístupový model a pravidlá bezpečného prepojenia sú zdokumentované v súbore [SUPABASE.md](SUPABASE.md).
+
 ## Plánovaný technologický základ
 
 - Next.js 16 a TypeScript

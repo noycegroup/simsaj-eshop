@@ -17,6 +17,9 @@
 
 # Production builds
 /build
+/dist
+/.wrangler
+/.vinext
 
 # Local environment files
 .env*

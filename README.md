@@ -6,6 +6,8 @@ Pripravovaný e-shop pre **SIMSAJ** so zameraním na ortopedickú, barefoot a zd
 
 Projekt je v prípravnej fáze. Rozsah, odporúčaná architektúra a konkrétne míľniky sú uvedené v súbore [ROADMAP.md](ROADMAP.md).
 
+Vizuálny smer, pracovná farebná paleta, štruktúra domovskej stránky a evidencia dodaných podkladov sú zdokumentované v súbore [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md).
+
 ## Plánovaný technologický základ
 
 - Next.js 16 a TypeScript

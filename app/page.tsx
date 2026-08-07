@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const categories = [
   { icon: "◒", title: "Ortopedická obuv", text: "Pohodlie a podpora pre každý krok" },
@@ -73,7 +74,7 @@ export default function Home() {
           <h1 id="hero-title">Zdravie<br />začína od <span>nôh.</span></h1>
           <p>Kvalitná ortopedická obuv, vložky, ponožky a odborné poradenstvo pre vaše pohodlie každý deň.</p>
           <div className="hero-actions">
-            <a className="button primary" href="/produkty">Nakupovať <Arrow /></a>
+            <Link className="button primary" href="/produkty">Nakupovať <Arrow /></Link>
             <a className="button secondary" href="#diagnostika">Meranie a diagnostika <span aria-hidden="true">♧</span></a>
           </div>
         </div>
@@ -93,15 +94,15 @@ export default function Home() {
       <section className="section categories" id="kategorie" aria-labelledby="categories-title">
         <div className="section-heading">
           <div><p className="eyebrow">VŠETKO PRE ZDRAVÝ KROK</p><h2 id="categories-title">Vyberte si podľa svojich potrieb</h2></div>
-          <a href="/produkty">Všetky kategórie <Arrow /></a>
+          <Link href="/produkty">Všetky kategórie <Arrow /></Link>
         </div>
         <div className="category-grid">
           {categories.map((category, index) => (
-            <a className={`category-card category-${index + 1}`} href="/produkty" key={category.title}>
+            <Link className={`category-card category-${index + 1}`} href="/produkty" key={category.title}>
               <span className="category-icon">{category.icon}</span>
               <div><h3>{category.title}</h3><p>{category.text}</p></div>
               <span className="card-link">Zobraziť <Arrow /></span>
-            </a>
+            </Link>
           ))}
         </div>
       </section>

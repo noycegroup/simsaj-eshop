@@ -1,0 +1,30 @@
+name: Synchronizácia feedu Diawin
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+concurrency:
+  group: sync-diawin-feed
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ vars.DIAWIN_FEED_SYNC_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Overiť a importovať feedy
+        run: npm run feed:diawin -- --apply
+        env:
+          DIAWIN_CATALOG_FEED_URL: ${{ secrets.DIAWIN_CATALOG_FEED_URL }}
+          DIAWIN_INVENTORY_FEED_URL: ${{ secrets.DIAWIN_INVENTORY_FEED_URL }}
+          DIAWIN_FEED_AUTHORIZATION: ${{ secrets.DIAWIN_FEED_AUTHORIZATION }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}

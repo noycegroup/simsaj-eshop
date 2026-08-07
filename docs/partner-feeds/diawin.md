@@ -44,3 +44,7 @@ npm run feed:diawin -- --catalog /cesta/01_google_feed.xml --inventory /cesta/01
 ```
 
 Produkčný zápis vyžaduje serverovú premennú `SUPABASE_DATABASE_URL` a prepínač `--apply`. Databázové heslo sa nesmie ukladať do repozitára ani používať vo webovom klientovi.
+
+Importér prijíma lokálne súbory aj HTTPS URL. Pre automatický režim používa serverové premenné `DIAWIN_CATALOG_FEED_URL`, `DIAWIN_INVENTORY_FEED_URL` a voliteľne `DIAWIN_FEED_AUTHORIZATION`. Identický feed podľa kontrolného súčtu preskočí a databázový zámok zabráni dvom súbežným importom. Každý spustený zápis končí stavom `succeeded` alebo `failed` v histórii importov.
+
+Pripravený denný plán v GitHub Actions je štandardne vypnutý. Aktivuje sa až po bezpečnom pridaní uvedených hodnôt medzi GitHub Actions secrets a nastavení premennej `DIAWIN_FEED_SYNC_ENABLED=true`. Manuálne spustenie používa rovnaké bezpečnostné pravidlá.

@@ -49,5 +49,16 @@ test("admin catalog is server protected and excluded from search", async () => {
   assert.match(page, /requireChatGPTUser\("\/admin"\)/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
   assert.match(page, /\.from\("products"\)/);
-  assert.match(page, /Synchronizácia Diawin/);
+  assert.match(page, /Synchronizácia partnerov/);
+});
+
+test("SVORTO import keeps B2B data private and exposes customer catalog data", async () => {
+  const importer = await readFile(new URL("../scripts/import-svorto-feed.mjs", import.meta.url), "utf8");
+  assert.match(importer, /parseSvortoFeed/);
+  assert.match(importer, /private\.supplier_products/);
+  assert.match(importer, /WHOLESALE_PRICE_TAX_EXCL/);
+  assert.match(importer, /BASE_PRICE_PRICE_TAX_INCL/);
+  assert.match(importer, /public\.product_variants/);
+  assert.match(importer, /pg_try_advisory_lock/);
+  assert.doesNotMatch(importer, /b2b_feed\.php\?key=/);
 });

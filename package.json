@@ -12,7 +12,8 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "feed:diawin": "node scripts/import-partner-feed.mjs --partner diawin"
+    "feed:diawin": "node scripts/import-partner-feed.mjs --partner diawin",
+    "feed:svorto": "node scripts/import-svorto-feed.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.4",

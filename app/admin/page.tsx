@@ -25,7 +25,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     const working = diawinWorkingCatalog[product.name];
     return !query || `${product.name} ${product.brand ?? ""} ${working?.model ?? ""}`.toLocaleLowerCase("sk").includes(query);
   });
-  const readyCount = (products ?? []).filter((product) => Boolean(diawinWorkingCatalog[product.name])).length;
+  const readyCount = products?.length ?? 0;
 
   return <main className="admin-page">
     <header className="admin-header">
@@ -37,7 +37,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       <div className="admin-stats">
         <article><span>Produkty</span><strong>{products?.length ?? 0}</strong><small>v databáze</small></article>
         <article><span>Pracovné podklady</span><strong>{readyCount}</strong><small>s cenou a fotografiou</small></article>
-        <article><span>Partneri</span><strong>1</strong><small>Diawin pripojený</small></article>
+        <article><span>Partneri</span><strong>2</strong><small>Diawin a SVORTO</small></article>
         <article><span>Synchronizácia</span><strong className="admin-status-ready">Pripravená</strong><small>aktivácia po dodaní URL</small></article>
       </div>
       <section className="admin-panel">
@@ -50,7 +50,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </tr>; })}
         </tbody></table>{visibleProducts.length === 0 ? <p className="admin-message">Pre toto vyhľadávanie sme nenašli produkt.</p> : null}</div>}
       </section>
-      <section className="admin-panel admin-feed-panel"><div><p className="eyebrow">AUTOMATIZÁCIA</p><h2>Synchronizácia Diawin</h2><p>Import kontroluje zhodu SKU a GTIN, preskakuje nezmenené feedy a zabraňuje súbežnému spusteniu.</p></div><ol><li><span>1</span>Doplniť produkčné URL feedov</li><li><span>2</span>Uložiť prístupy ako tajomstvá</li><li><span>3</span>Aktivovať dennú synchronizáciu</li></ol></section>
+      <section className="admin-panel admin-feed-panel"><div><p className="eyebrow">AUTOMATIZÁCIA</p><h2>Synchronizácia partnerov</h2><p>Importy Diawin a SVORTO kontrolujú identifikátory, preskakujú nezmenené feedy a zabraňujú súbežnému spusteniu.</p></div><ol><li><span>1</span>SVORTO: 160 produktov importovaných</li><li><span>2</span>SVORTO: 594 variantov a 881 fotografií</li><li><span>3</span>Denný plán pripravený na bezpečnú aktiváciu</li></ol></section>
     </section>
   </main>;
 }

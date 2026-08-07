@@ -86,9 +86,9 @@ export function CatalogFilters({ suggestions, initialQuery, initialSeries, initi
         </span> : null}
       </span>
     </label>
-    <label>Modelová rada
+    <label>Značka / modelová rada
       <select name="series" defaultValue={initialSeries} onChange={(event) => applyFilter("series", event.target.value)}>
-        <option value="">Všetky rady</option><option value="AF">AF</option><option value="AM">AM</option><option value="FF">FF</option><option value="FM">FM</option><option value="TF">TF</option><option value="TM">TM</option>
+        <option value="">Všetky produkty</option><option value="SVORTO">SVORTO</option><option value="AF">Diawin AF</option><option value="AM">Diawin AM</option><option value="FF">Diawin FF</option><option value="FM">Diawin FM</option><option value="TF">Diawin TF</option><option value="TM">Diawin TM</option>
       </select>
     </label>
     <label>Veľkosť

@@ -1,0 +1,28 @@
+name: Synchronizácia feedu SVORTO
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 3 * * *"
+
+concurrency:
+  group: sync-svorto-feed
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ vars.SVORTO_FEED_SYNC_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Overiť a importovať feed SVORTO
+        run: npm run feed:svorto -- --apply
+        env:
+          SVORTO_FEED_URL: ${{ secrets.SVORTO_FEED_URL }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}

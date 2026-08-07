@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type CartItem = {
   key: string;
@@ -30,25 +30,31 @@ const storageVersion = 1;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const storageLoaded = useRef(false);
+  const [storageLoaded, setStorageLoaded] = useState(false);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(storageKey);
       if (saved) {
         const parsed = JSON.parse(saved) as { version?: number; items?: CartItem[] };
-        if (parsed.version === storageVersion && Array.isArray(parsed.items)) queueMicrotask(() => setItems(parsed.items ?? []));
+        if (parsed.version === storageVersion && Array.isArray(parsed.items)) {
+          queueMicrotask(() => {
+            setItems(parsed.items ?? []);
+            setStorageLoaded(true);
+          });
+          return;
+        }
       }
     } catch {
       window.localStorage.removeItem(storageKey);
     }
-    storageLoaded.current = true;
+    queueMicrotask(() => setStorageLoaded(true));
   }, []);
 
   useEffect(() => {
-    if (!storageLoaded.current) return;
+    if (!storageLoaded) return;
     window.localStorage.setItem(storageKey, JSON.stringify({ version: storageVersion, items }));
-  }, [items]);
+  }, [items, storageLoaded]);
 
   const value = useMemo<CartContextValue>(() => ({
     items,

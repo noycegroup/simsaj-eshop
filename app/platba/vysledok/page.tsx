@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { readAndPersistComgateStatus } from "@/lib/server/comgate";
+import { SiteHeader } from "@/components/site-header";
 
 export const dynamic = "force-dynamic";
 
@@ -13,5 +14,5 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
   }
   const paid = result?.paymentStatus === "paid";
   const cancelled = result?.paymentStatus === "cancelled";
-  return <main className="flow-page payment-result"><div className="checkout-success"><span>{paid ? "✓" : cancelled ? "×" : "…"}</span><p className="eyebrow">BEZPEČNÁ PLATBA COMGATE</p><h1>{paid ? "Platba bola úspešná." : cancelled ? "Platba nebola dokončená." : "Platbu ešte overujeme."}</h1>{result?.orderNumber && <p>Číslo objednávky: <strong>{result.orderNumber}</strong></p>}<p>{paid ? "Objednávku sme označili ako uhradenú." : cancelled ? "Objednávka zostáva uložená a platbu môžete skúsiť znova." : "Rozhodujúci je stav bezpečne overený priamo v Comgate."}</p><Link className="button primary" href="/produkty">Pokračovať v nákupe</Link></div></main>;
+  return <><SiteHeader suggestions={[]} /><main className="flow-page payment-result"><div className="checkout-success"><span>{paid ? "✓" : cancelled ? "×" : "…"}</span><p className="eyebrow">BEZPEČNÁ PLATBA COMGATE</p><h1>{paid ? "Platba bola úspešná." : cancelled ? "Platba nebola dokončená." : "Platbu ešte overujeme."}</h1>{result?.orderNumber && <p>Číslo objednávky: <strong>{result.orderNumber}</strong></p>}<p>{paid ? "Objednávku sme označili ako uhradenú." : cancelled ? "Objednávka zostáva uložená a platbu môžete skúsiť znova." : "Rozhodujúci je stav bezpečne overený priamo v Comgate."}</p><Link className="button primary" href="/produkty">Pokračovať v nákupe</Link></div></main></>;
 }

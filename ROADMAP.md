@@ -61,7 +61,7 @@ Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady
 
 **Výstup:** odlíšenie SIMSAJ odbornou pomocou, ktorá prirodzene prepája služby a predaj.
 
-## Fáza 5 – Platby
+## Fáza 5 – Platby a fakturácia
 
 - Vybrať primárnu platobnú bránu podľa poplatkov, podpory a účtovných potrieb.
 - Podporiť platbu kartou a podľa možností Apple Pay a Google Pay.
@@ -69,8 +69,13 @@ Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady
 - Doplniť dobierku, bankový prevod, vrátenie platby a párovanie stavov.
 - Zabezpečiť spracovanie notifikácií platobnej brány, opakovanie chýb a ochranu pred duplicitnou objednávkou.
 - Otestovať úspešné, zamietnuté, prerušené a refundované platby.
+- Integrovať API SuperFaktúry na vytvorenie faktúry z potvrdenej objednávky, získanie PDF a uloženie čísla faktúry.
+- Evidovať stav synchronizácie so SuperFaktúrou (`pending`, `synced`, `failed`), bezpečnú chybovú správu a čas posledného pokusu.
+- Umožniť administrátorovi zopakovať neúspešnú synchronizáciu bez vytvorenia duplicitnej faktúry.
+- Nastaviť firemné údaje, číselný rad, logo, DPH a splatnosť cez serverovú konfiguráciu SIMSAJ; nepoužívať hodnoty pôvodného e-shopu.
+- Priložiť PDF faktúry k transakčnému e-mailu alebo sprístupniť bezpečný odkaz podľa finálneho prevádzkového rozhodnutia.
 
-**Výstup:** bezpečný a kompletne otestovaný platobný proces.
+**Výstup:** bezpečný a kompletne otestovaný platobný proces vrátane fakturácie a obnovy po chybe integrácie.
 
 ## Fáza 6 – Doprava
 
@@ -102,6 +107,10 @@ Admin rozhranie má postupne obsahovať:
 - produkty, varianty, kategórie, značky, parametre, ceny, médiá a SEO údaje,
 - importy XML feedov, mapovanie údajov, históriu behov a chybové záznamy,
 - objednávky, platby, zásielky, vratky, reklamácie a interné poznámky,
+- zoznam objednávok s vyhľadávaním a filtrami, hromadným výberom a exportom,
+- detail objednávky so zákazníkom, adresami, položkami, cenami, platbou, dopravou a časovou osou,
+- riadené zmeny stavov objednávky s auditnou stopou a zákazníckymi notifikáciami,
+- stav fakturácie v SuperFaktúre, číslo faktúry, odkaz na PDF a bezpečné manuálne zopakovanie synchronizácie,
 - zákazníkov, adresy a komunikáciu v súlade s pravidlami ochrany osobných údajov,
 - kalendár diagnostiky a poradenstva, kapacity, blokácie a notifikácie,
 - obsahové stránky, navigáciu, bannery, blog a presmerovania URL,
@@ -165,6 +174,7 @@ Admin rozhranie má postupne obsahovať:
 ### M4 – Objednávky od začiatku do konca
 
 - Produkčné platby, doprava, e-maily a správa objednávok.
+- Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
 - Otestované chybové situácie, refundácie, vratky a reklamácie.
 
 ### M5 – SIMSAJ služby
@@ -189,3 +199,26 @@ Admin rozhranie má postupne obsahovať:
 - Každú fázu uzavrieť merateľnými akceptačnými kritériami a krátkym používateľským testom.
 - Uprednostniť stabilný nákupný proces, kvalitné dáta a zrozumiteľný obsah pred nadbytočnými funkciami.
 - Dokumentovať integrácie, prevádzkové postupy, zálohovanie a obnovu po chybe.
+
+## Opätovné využitie riešenia Hravo s deťmi
+
+Pri administrácii objednávok a SuperFaktúre vychádzame z už overenej implementácie v repozitári `noycegroup/hravosdetmi-remake`. Prenášame princíp a všeobecné moduly, nie firemné údaje, tajné kľúče ani konfiguráciu pôvodného e-shopu.
+
+### Časti vhodné na adaptáciu
+
+- serverový klient SuperFaktúry: autorizácia, validácia konfigurácie, prepočet ceny s DPH, vytvorenie faktúry, načítanie PDF a bezpečné spracovanie chýb,
+- záznam výsledku synchronizácie do objednávky vrátane čísla, tokenu, času a chybového stavu,
+- zoznam posledných objednávok, vyhľadávanie podľa čísla, zákazníka a e-mailu,
+- detail objednávky a paralelné načítanie hlavičky s položkami,
+- povolené prechody stavov `new`, `processing`, `shipped`, `completed`, `cancelled`,
+- zákaznícke notifikácie pri zmene stavu,
+- ochrana administrátorských stránok a API pred neprihláseným používateľom.
+
+### Povinné úpravy pre SIMSAJ
+
+- prispôsobiť mapovanie existujúcej SIMSAJ schéme `orders` a `order_items`, ktorá používa JSON fakturačnú a doručovaciu adresu a polia `grand_total`/`shipping_total`,
+- použiť Supabase Auth s rolami a auditnou stopou namiesto jedného hesla uloženého v premenných prostredia,
+- presunúť SuperFaktúra `sequence_id`, `logo_id`, názov modulu a ostatné firemné nastavenia do zabezpečenej konfigurácie SIMSAJ,
+- doplniť idempotentný kľúč a kontrolu existujúcej faktúry pred každým opakovaným pokusom,
+- zakázať trvalé mazanie objednávok v bežnom rozhraní; používať storno alebo archiváciu kvôli účtovníctvu a auditu,
+- oddeliť vytvorenie objednávky od externých integrácií tak, aby výpadok SuperFaktúry nestratil objednávku ani nezablokoval potvrdenie zákazníkovi.

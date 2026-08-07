@@ -3,8 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { diawinWorkingCatalog, formatWorkingPrice } from "@/lib/diawin-working-catalog";
-import { CartLink } from "@/components/cart-link";
 import { CatalogFilters } from "@/components/catalog-filters";
+import { SiteHeader } from "@/components/site-header";
+import { catalogSuggestions } from "@/lib/catalog-suggestions";
 
 export const metadata: Metadata = {
   title: "Produkty Diawin a SVORTO | SIMSAJ",
@@ -22,6 +23,7 @@ const firstValue = (value: string | string[] | undefined) => Array.isArray(value
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
   const query = firstValue(params.q).trim().toLocaleLowerCase("sk");
+  const brand = firstValue(params.brand).toUpperCase();
   const series = firstValue(params.series);
   const size = firstValue(params.size);
   const width = firstValue(params.width);
@@ -40,7 +42,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       const sizes = workingProduct?.sizes ?? product.product_variants.filter((variant) => variant.is_active).map((variant) => variant.size ?? "");
       const searchable = `${product.name} ${product.brand ?? ""} ${product.short_description ?? ""} ${model}`.toLocaleLowerCase("sk");
       return (!query || searchable.includes(query))
-        && (!series || (series === "SVORTO" ? product.brand === "SVORTO" : workingProduct?.model.startsWith(series)))
+        && (!brand || product.brand?.toUpperCase() === brand)
+        && (!series || workingProduct?.model.startsWith(series))
         && (!size || sizes.includes(size))
         && (!width || workingProduct?.widths.some((item) => item.code === width));
     })
@@ -54,19 +57,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       return a.name.localeCompare(b.name, "sk");
     });
 
-  const activeFilters = Boolean(query || series || size || width || sort !== "name");
-  const suggestions = (products ?? []).flatMap((product) => {
-    const workingProduct = diawinWorkingCatalog[product.name];
-    const firstImage = [...product.product_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path;
-    const firstPrice = workingProduct?.price ?? Math.min(...product.product_variants.map((variant) => variant.price));
-    const image = workingProduct?.image ?? firstImage;
-    return image && Number.isFinite(firstPrice) ? [{ name: product.name, slug: product.slug, brand: product.brand, model: workingProduct?.model ?? "SVORTO", image, price: workingProduct ? formatWorkingPrice(workingProduct) : new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR" }).format(firstPrice) }] : [];
-  });
+  const activeFilters = Boolean(query || brand || series || size || width || sort !== "name");
+  const suggestions = catalogSuggestions(products ?? []);
+  const brands = [...new Set((products ?? []).map((product) => product.brand).filter((value): value is string => Boolean(value)))].sort((a, b) => a.localeCompare(b, "sk"));
+  const sizes = [...new Set((products ?? []).flatMap((product) => {
+    const working = diawinWorkingCatalog[product.name];
+    return working?.sizes ?? product.product_variants.map((variant) => variant.size).filter((value): value is string => Boolean(value));
+  }))].sort((a, b) => a.localeCompare(b, "sk", { numeric: true }));
 
   return (
-    <main className="catalog-page">
+    <><SiteHeader suggestions={suggestions} /><main className="catalog-page">
       <header className="catalog-header">
-        <div className="catalog-toolbar"><Link href="/" className="catalog-back">← Späť na domov</Link><CartLink /></div>
         <p className="eyebrow">PARTNERI · DIAWIN · SVORTO</p>
         <h1>Produkty pre zdravé chodidlá</h1>
         <p>Obuv, ortopedické vložky a pomôcky načítavame priamo z partnerských XML feedov. Produkty SVORTO obsahujú dodané ceny a fotografie; pri Diawin zostávajú pracovné podklady orientačné.</p>
@@ -80,7 +81,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <p className="catalog-message">Produkty sa momentálne nepodarilo načítať. Skúste to, prosím, neskôr.</p>
       ) : (
         <>
-          <CatalogFilters suggestions={suggestions} initialQuery={firstValue(params.q)} initialSeries={series} initialSize={size} initialWidth={width} initialSort={sort} />
+          <CatalogFilters suggestions={suggestions} brands={brands} sizes={sizes} initialQuery={firstValue(params.q)} initialBrand={brand} initialSeries={series} initialSize={size} initialWidth={width} initialSort={sort} />
           <div className="catalog-results" aria-live="polite">
             <strong>{filteredProducts.length} {filteredProducts.length === 1 ? "produkt" : filteredProducts.length > 1 && filteredProducts.length < 5 ? "produkty" : "produktov"}</strong>
             {activeFilters ? <Link href="/produkty">Zrušiť všetky filtre</Link> : null}
@@ -121,6 +122,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </section>
         </>
       )}
-    </main>
+    </main></>
   );
 }

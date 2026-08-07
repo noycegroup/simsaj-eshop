@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
 
 const categories = [
   { icon: "◒", title: "Ortopedická obuv", text: "Pohodlie a podpora pre každý krok" },
@@ -33,40 +34,7 @@ function Arrow() {
 export default function Home() {
   return (
     <main>
-      <div className="topbar">
-        <span>▱ Doprava zdarma pri nákupe nad 70 €</span>
-        <span>♧ Odborné poradenstvo a diagnostika</span>
-        <span>◇ Overené značky a kvalita</span>
-      </div>
-
-      <header className="site-header">
-        <a href="#" className="brand" aria-label="SIMSAJ – domov">
-          <Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ – pre vaše nohy" width={230} height={106} priority unoptimized />
-        </a>
-        <form className="search" role="search">
-          <label className="sr-only" htmlFor="site-search">Hľadať produkty</label>
-          <input id="site-search" type="search" placeholder="Hľadať produkty..." />
-          <button type="submit" aria-label="Vyhľadať">⌕</button>
-        </form>
-        <nav className="quick-actions" aria-label="Používateľské možnosti">
-          <a href="#ucet"><b>♙</b><span>Prihlásenie</span></a>
-          <a href="#oblubene"><b>♡</b><span>Obľúbené</span></a>
-          <a href="#kosik" className="cart"><b>▱</b><span>Košík</span><em>0</em></a>
-        </nav>
-      </header>
-
-      <nav className="category-nav" aria-label="Hlavná navigácia">
-        <a href="#ortopedicka">Ortopedická obuv</a>
-        <a href="#detska">Detská obuv</a>
-        <a href="#barefoot">Barefoot</a>
-        <a href="#ponozky">Zdravotné ponožky</a>
-        <a href="#vlozky">Ortopedické vložky</a>
-        <a href="#diagnostika">Meranie a diagnostika</a>
-        <a href="#health">SIMSAJ Health</a>
-        <a href="#onas">O nás</a>
-        <a href="#blog">Blog</a>
-        <a href="#kontakt">Kontakt</a>
-      </nav>
+      <SiteHeader suggestions={[]} />
 
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-copy">

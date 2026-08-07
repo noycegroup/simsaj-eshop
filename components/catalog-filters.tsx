@@ -16,14 +16,17 @@ export type CatalogSuggestion = {
 
 type CatalogFiltersProps = {
   suggestions: CatalogSuggestion[];
+  brands: string[];
+  sizes: string[];
   initialQuery: string;
+  initialBrand: string;
   initialSeries: string;
   initialSize: string;
   initialWidth: string;
   initialSort: string;
 };
 
-export function CatalogFilters({ suggestions, initialQuery, initialSeries, initialSize, initialWidth, initialSort }: CatalogFiltersProps) {
+export function CatalogFilters({ suggestions, brands, sizes, initialQuery, initialBrand, initialSeries, initialSize, initialWidth, initialSort }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
@@ -86,14 +89,19 @@ export function CatalogFilters({ suggestions, initialQuery, initialSeries, initi
         </span> : null}
       </span>
     </label>
-    <label>Značka / modelová rada
+    <label>Značka
+      <select name="brand" defaultValue={initialBrand} onChange={(event) => applyFilter("brand", event.target.value)}>
+        <option value="">Všetky značky</option>{brands.map((item) => <option value={item.toUpperCase()} key={item}>{item}</option>)}
+      </select>
+    </label>
+    <label>Modelová rada
       <select name="series" defaultValue={initialSeries} onChange={(event) => applyFilter("series", event.target.value)}>
-        <option value="">Všetky produkty</option><option value="SVORTO">SVORTO</option><option value="AF">Diawin AF</option><option value="AM">Diawin AM</option><option value="FF">Diawin FF</option><option value="FM">Diawin FM</option><option value="TF">Diawin TF</option><option value="TM">Diawin TM</option>
+        <option value="">Všetky rady</option><option value="AF">Diawin AF</option><option value="AM">Diawin AM</option><option value="FF">Diawin FF</option><option value="FM">Diawin FM</option><option value="TF">Diawin TF</option><option value="TM">Diawin TM</option>
       </select>
     </label>
     <label>Veľkosť
       <select name="size" defaultValue={initialSize} onChange={(event) => applyFilter("size", event.target.value)}>
-        <option value="">Všetky veľkosti</option>{Array.from({ length: 15 }, (_, index) => String(index + 36)).map((item) => <option value={item} key={item}>{item}</option>)}
+        <option value="">Všetky veľkosti</option>{sizes.map((item) => <option value={item} key={item}>{item}</option>)}
       </select>
     </label>
     <label>Šírka

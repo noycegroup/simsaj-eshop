@@ -534,7 +534,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_product_feed_catalog: {
+        Row: {
+          brand: string | null
+          customer_price: number | null
+          id: string
+          image_url: string | null
+          model: string | null
+          name: string
+          purchase_price: number | null
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

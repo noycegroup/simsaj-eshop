@@ -23,6 +23,8 @@ Do repozitára sa nesmú ukladať tajné ani `service_role` kľúče. Webový kl
 - `order_items`
 - `appointments`
 
+Partnerské feedy používajú súkromnú schému `private` s tabuľkami `suppliers`, `supplier_feeds`, `feed_imports`, `supplier_products` a `supplier_variants`. Táto vrstva nie je dostupná cez verejné dátové API.
+
 ## Prístupový model
 
 - Verejnosť môže čítať iba aktívne kategórie, publikované produkty, ich aktívne varianty a obrázky.
@@ -40,4 +42,4 @@ Do repozitára sa nesmú ukladať tajné ani `service_role` kľúče. Webový kl
 
 ## Ďalší krok
 
-Pridať lokálnu migráciu schémy, nastaviť runtime premenné v hostingu, vložiť prvé kategórie a napojiť verejný katalóg na Supabase.
+Získať od partnera Diawin ceny a fotografie, doplniť ich mapovanie a až potom aktivovať nákup variantov.

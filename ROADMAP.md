@@ -9,7 +9,7 @@ Vybudovať dôveryhodný, rýchly a jednoducho spravovateľný e-shop pre SIMSAJ
 - **M0 – dokončený:** repozitár, roadmapa a základná dokumentácia.
 - **M1 – rozpracovaný:** aplikácia, databáza a hosting sú online; zostáva administrátorské prihlásenie a úplné SEO minimum.
 - **M2 – funkčný prototyp:** katalóg, detail produktu, výber veľkosti a šírky, lokálny skúšobný košík a nezáväzná pokladňa.
-- **M3 – rozpracovaný:** prvý partner Diawin je importovaný; zostávajú filtre, vyhľadávanie, administrácia a plánovaná automatická synchronizácia.
+- **M3 – rozpracovaný:** prvý partner Diawin je importovaný; katalóg má vyhľadávanie, filtre a radenie, zostáva administrácia a plánovaná automatická synchronizácia.
 
 Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady. Produkčný nákup zostáva vypnutý do ich potvrdenia.
 

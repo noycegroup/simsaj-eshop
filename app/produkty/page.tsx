@@ -12,13 +12,45 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductsPage() {
+type ProductsPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const firstValue = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] ?? "" : value ?? "";
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams;
+  const query = firstValue(params.q).trim().toLocaleLowerCase("sk");
+  const series = firstValue(params.series);
+  const size = firstValue(params.size);
+  const width = firstValue(params.width);
+  const sort = firstValue(params.sort) || "name";
   const supabase = await createClient();
   const { data: products, error } = await supabase
     .from("products")
     .select("id,name,slug,short_description,brand")
     .eq("status", "active")
     .order("name");
+
+  const filteredProducts = (products ?? [])
+    .filter((product) => {
+      const workingProduct = diawinWorkingCatalog[product.name];
+      if (!workingProduct) return false;
+      const searchable = `${product.name} ${product.brand ?? ""} ${product.short_description ?? ""} ${workingProduct.model}`.toLocaleLowerCase("sk");
+      return (!query || searchable.includes(query))
+        && (!series || workingProduct.model.startsWith(series))
+        && (!size || workingProduct.sizes.includes(size))
+        && (!width || workingProduct.widths.some((item) => item.code === width));
+    })
+    .sort((a, b) => {
+      const first = diawinWorkingCatalog[a.name];
+      const second = diawinWorkingCatalog[b.name];
+      if (sort === "price-asc") return first.price - second.price;
+      if (sort === "price-desc") return second.price - first.price;
+      return a.name.localeCompare(b.name, "sk");
+    });
+
+  const activeFilters = Boolean(query || series || size || width || sort !== "name");
 
   return (
     <main className="catalog-page">
@@ -36,8 +68,40 @@ export default async function ProductsPage() {
       {error ? (
         <p className="catalog-message">Produkty sa momentálne nepodarilo načítať. Skúste to, prosím, neskôr.</p>
       ) : (
+        <>
+          <form className="catalog-filters" action="/produkty" method="get">
+            <label className="catalog-search">Hľadať produkt
+              <input name="q" type="search" defaultValue={firstValue(params.q)} placeholder="Názov alebo kód modelu" />
+            </label>
+            <label>Modelová rada
+              <select name="series" defaultValue={series}>
+                <option value="">Všetky rady</option><option value="AF">AF</option><option value="AM">AM</option><option value="FF">FF</option><option value="FM">FM</option><option value="TF">TF</option><option value="TM">TM</option>
+              </select>
+            </label>
+            <label>Veľkosť
+              <select name="size" defaultValue={size}>
+                <option value="">Všetky veľkosti</option>{Array.from({ length: 15 }, (_, index) => String(index + 36)).map((item) => <option value={item} key={item}>{item}</option>)}
+              </select>
+            </label>
+            <label>Šírka
+              <select name="width" defaultValue={width}>
+                <option value="">Všetky šírky</option><option value="1">M – stredná</option><option value="2">W – široká</option><option value="3">XW – extra široká</option>
+              </select>
+            </label>
+            <label>Radenie
+              <select name="sort" defaultValue={sort}>
+                <option value="name">Podľa názvu</option><option value="price-asc">Cena od najnižšej</option><option value="price-desc">Cena od najvyššej</option>
+              </select>
+            </label>
+            <button type="submit">Použiť filtre</button>
+          </form>
+          <div className="catalog-results" aria-live="polite">
+            <strong>{filteredProducts.length} {filteredProducts.length === 1 ? "produkt" : filteredProducts.length > 1 && filteredProducts.length < 5 ? "produkty" : "produktov"}</strong>
+            {activeFilters ? <Link href="/produkty">Zrušiť všetky filtre</Link> : null}
+          </div>
+          {filteredProducts.length === 0 ? <div className="catalog-empty"><h2>Nenašli sme zodpovedajúci produkt</h2><p>Skúste upraviť vyhľadávanie alebo odstrániť niektorý filter.</p><Link href="/produkty">Zobraziť celý katalóg</Link></div> : null}
         <section className="product-grid" aria-label="Produkty Diawin">
-          {products?.map((product) => {
+          {filteredProducts.map((product) => {
             const workingProduct = diawinWorkingCatalog[product.name];
             return (
               <article className="product-card" key={product.id}>
@@ -65,6 +129,7 @@ export default async function ProductsPage() {
             );
           })}
         </section>
+        </>
       )}
     </main>
   );

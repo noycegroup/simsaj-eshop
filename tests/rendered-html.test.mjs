@@ -43,3 +43,11 @@ test("catalog provides instant filters and product suggestions", async () => {
   assert.match(page, /role="combobox"/);
   assert.match(page, /Zobraziť nájdené produkty/);
 });
+
+test("admin catalog is server protected and excluded from search", async () => {
+  const page = await readFile(new URL("../app/admin/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /requireChatGPTUser\("\/admin"\)/);
+  assert.match(page, /robots: \{ index: false, follow: false \}/);
+  assert.match(page, /\.from\("products"\)/);
+  assert.match(page, /Synchronizácia Diawin/);
+});

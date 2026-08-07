@@ -26,9 +26,12 @@
 Feed momentálne neobsahuje predajnú ani nákupnú cenu, menu, obrázky, produktovú URL, detailný opis, materiál, farbu ani určenie pre zákaznícku skupinu. Preto:
 
 - varianty sa ukladajú v súkromnej partnerskej vrstve,
-- modely sú v katalógu zobrazené iba ako pripravované,
-- nákupné tlačidlá a ceny sa nezobrazujú,
+- modely používajú jednorazovo dohľadané ilustračné fotografie a orientačné ceny,
+- pri každej pracovnej cene je uložený zdroj a dátum kontroly,
+- nákupné tlačidlá sa nezobrazujú,
 - produkt sa nesmie stať predajným, kým nemá potvrdenú cenu a fotografiu.
+
+Pracovné obohatenie katalógu je uložené oddelene od partnerského feedu. Opakovaný XML import preto neprepíše ilustračné fotografie ani orientačné ceny. Pred ostrým spustením sa musia nahradiť potvrdenými podkladmi od partnera.
 
 ## Opakovaný import
 

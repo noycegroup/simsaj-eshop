@@ -86,9 +86,9 @@ body:has(.admin-page) > footer { display: none; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
 
 .catalog-page { min-height: 100vh; padding: 70px max(24px, calc((100vw - 1240px)/2)) 90px; background: #f5f7f6; }
-.catalog-header { max-width: 760px; margin-bottom: 42px; }
+.catalog-header { width: 100%; max-width: none; margin-bottom: 42px; }
 .catalog-back { display: inline-block; margin-bottom: 42px; color: var(--green); font-size: 13px; font-weight: 750; }
-.catalog-header h1 { margin: 0 0 18px; font-size: clamp(42px, 6vw, 72px); line-height: .98; letter-spacing: -.055em; }
+.catalog-header h1 { margin: 0 0 18px; font-size: clamp(36px, 4vw, 72px); line-height: .98; letter-spacing: -.055em; }
 .catalog-header > p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
 .catalog-notice { margin-top: 24px; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; border: 1px solid #d8c78d; border-radius: 8px; background: #fff9e7; color: #6d5b20; font-size: 12px; }
 .catalog-notice strong { text-transform: uppercase; letter-spacing: .06em; }

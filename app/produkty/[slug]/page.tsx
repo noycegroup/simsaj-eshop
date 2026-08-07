@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CartLink } from "@/components/cart-link";
 import { ProductConfigurator } from "@/components/product-configurator";
+import { SiteHeader } from "@/components/site-header";
+import { catalogSuggestions } from "@/lib/catalog-suggestions";
 import { diawinWorkingCatalog, formatWorkingPrice } from "@/lib/diawin-working-catalog";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,6 +14,12 @@ async function getProduct(slug: string) {
   const supabase = await createClient();
   const { data } = await supabase.from("products").select("id,name,slug,short_description,description,brand,product_variants(price,size,stock_quantity,is_active,sku),product_images(storage_path,sort_order)").eq("slug", slug).eq("status", "active").maybeSingle();
   return data;
+}
+
+async function getSearchSuggestions() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("products").select("name,slug,brand,product_variants(price),product_images(storage_path,sort_order)").eq("status", "active").order("name");
+  return catalogSuggestions(data ?? []);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -26,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = await getProduct(slug);
+  const [product, suggestions] = await Promise.all([getProduct(slug), getSearchSuggestions()]);
   if (!product) notFound();
   const workingProduct = diawinWorkingCatalog[product.name];
   const activeVariants = product.product_variants.filter((variant) => variant.is_active && variant.stock_quantity > 0);
@@ -37,9 +44,10 @@ export default async function ProductDetailPage({ params }: Props) {
   const model = workingProduct?.model ?? "SVORTO";
   if (!image || !Number.isFinite(price) || !sizes.length) notFound();
 
-  return (
+  return (<>
+    <SiteHeader suggestions={suggestions} />
     <main className="detail-page">
-      <div className="detail-toolbar"><Link href="/produkty">← Všetky produkty</Link><CartLink /></div>
+      <div className="detail-toolbar"><Link href="/produkty">← Všetky produkty</Link></div>
       <div className="detail-grid">
         <div className="detail-image"><Image src={image} alt={`${product.name} – produktová fotografia`} fill sizes="(max-width: 800px) 100vw, 50vw" unoptimized />{workingProduct ? <span>Ilustračné foto</span> : null}</div>
         <section className="detail-copy">
@@ -53,5 +61,5 @@ export default async function ProductDetailPage({ params }: Props) {
         </section>
       </div>
     </main>
-  );
+  </>);
 }

@@ -29,8 +29,8 @@ test("server renders the SIMSAJ storefront", async () => {
   assert.doesNotMatch(html, /codex-preview|Building your site/i);
 });
 
-test("catalog provides shareable search, filters and sorting", async () => {
-  const page = await readFile(new URL("../app/produkty/page.tsx", import.meta.url), "utf8");
+test("catalog provides instant filters and product suggestions", async () => {
+  const page = await readFile(new URL("../components/catalog-filters.tsx", import.meta.url), "utf8");
 
   for (const field of ["q", "series", "size", "width", "sort"]) {
     assert.match(page, new RegExp(`name=\\"${field}\\"`));
@@ -38,6 +38,8 @@ test("catalog provides shareable search, filters and sorting", async () => {
   assert.match(page, /method="get"/);
   assert.match(page, /price-asc/);
   assert.match(page, /price-desc/);
-  assert.match(page, /Zrušiť všetky filtre/);
-  assert.match(page, /aria-live="polite"/);
+  assert.match(page, /router\.replace/);
+  assert.match(page, /onChange=\{\(event\) => applyFilter/);
+  assert.match(page, /role="combobox"/);
+  assert.match(page, /Zobraziť nájdené produkty/);
 });

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { diawinWorkingCatalog, formatWorkingPrice } from "@/lib/diawin-working-catalog";
 import { CartLink } from "@/components/cart-link";
+import { CatalogFilters } from "@/components/catalog-filters";
 
 export const metadata: Metadata = {
   title: "Produkty Diawin | SIMSAJ",
@@ -51,6 +52,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     });
 
   const activeFilters = Boolean(query || series || size || width || sort !== "name");
+  const suggestions = (products ?? []).flatMap((product) => {
+    const workingProduct = diawinWorkingCatalog[product.name];
+    return workingProduct ? [{ name: product.name, slug: product.slug, brand: product.brand, model: workingProduct.model, image: workingProduct.image, price: formatWorkingPrice(workingProduct) }] : [];
+  });
 
   return (
     <main className="catalog-page">
@@ -69,32 +74,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <p className="catalog-message">Produkty sa momentálne nepodarilo načítať. Skúste to, prosím, neskôr.</p>
       ) : (
         <>
-          <form className="catalog-filters" action="/produkty" method="get">
-            <label className="catalog-search">Hľadať produkt
-              <input name="q" type="search" defaultValue={firstValue(params.q)} placeholder="Názov alebo kód modelu" />
-            </label>
-            <label>Modelová rada
-              <select name="series" defaultValue={series}>
-                <option value="">Všetky rady</option><option value="AF">AF</option><option value="AM">AM</option><option value="FF">FF</option><option value="FM">FM</option><option value="TF">TF</option><option value="TM">TM</option>
-              </select>
-            </label>
-            <label>Veľkosť
-              <select name="size" defaultValue={size}>
-                <option value="">Všetky veľkosti</option>{Array.from({ length: 15 }, (_, index) => String(index + 36)).map((item) => <option value={item} key={item}>{item}</option>)}
-              </select>
-            </label>
-            <label>Šírka
-              <select name="width" defaultValue={width}>
-                <option value="">Všetky šírky</option><option value="1">M – stredná</option><option value="2">W – široká</option><option value="3">XW – extra široká</option>
-              </select>
-            </label>
-            <label>Radenie
-              <select name="sort" defaultValue={sort}>
-                <option value="name">Podľa názvu</option><option value="price-asc">Cena od najnižšej</option><option value="price-desc">Cena od najvyššej</option>
-              </select>
-            </label>
-            <button type="submit">Použiť filtre</button>
-          </form>
+          <CatalogFilters suggestions={suggestions} initialQuery={firstValue(params.q)} initialSeries={series} initialSize={size} initialWidth={width} initialSort={sort} />
           <div className="catalog-results" aria-live="polite">
             <strong>{filteredProducts.length} {filteredProducts.length === 1 ? "produkt" : filteredProducts.length > 1 && filteredProducts.length < 5 ? "produkty" : "produktov"}</strong>
             {activeFilters ? <Link href="/produkty">Zrušiť všetky filtre</Link> : null}

@@ -225,6 +225,8 @@ Pri administrácii objednávok a SuperFaktúre vychádzame z už overenej implem
 - klientské meranie detailu produktu a dokončenej objednávky,
 - serverové odoslanie objednávky do programu Heureka Overené zákazníkmi,
 - opt-out voľba v pokladni a evidencia stavu, pokusov a chýb integrácie.
+- Comgate API pre založenie platby, serverové overenie stavu, notifikácie a bezpečnú návratovú stránku,
+- označenie Comgate, Visa, Mastercard, Apple Pay a Google Pay v pätičke pri zachovaní vizuálu SIMSAJ.
 
 ### Povinné úpravy pre SIMSAJ
 
@@ -237,3 +239,4 @@ Pri administrácii objednávok a SuperFaktúre vychádzame z už overenej implem
 - nahradiť Heureka kľúč pôvodného e-shopu konfiguráciou SIMSAJ a neposielať žiadne testovacie objednávky do produkčného účtu,
 - mapovať SIMSAJ SKU, ceny, dostupnosť a URL produktov do formátu Heureky a validovať feed pred publikovaním,
 - aktivovať konverzné skripty len podľa pravidiel súhlasu a odoslať dotazník iba zákazníkom, ktorí ho neodmietli.
+- použiť samostatné Comgate obchodnícke ID a tajný kľúč SIMSAJ, najskôr v testovacom režime; ostrú prevádzku povoliť až po úspešných scenároch zaplatené, zrušené a čakajúce.

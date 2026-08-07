@@ -266,6 +266,9 @@ export type Database = {
       orders: {
         Row: {
           billing_address: Json
+          comgate_last_status_response: Json | null
+          comgate_redirect_url: string | null
+          comgate_trans_id: string | null
           created_at: string
           currency: string
           customer_note: string | null
@@ -274,7 +277,11 @@ export type Database = {
           grand_total: number
           id: string
           order_number: string
+          payment_access_token_hash: string | null
+          payment_method: string
+          payment_paid_at: string | null
           payment_status: string
+          payment_status_updated_at: string | null
           placed_at: string | null
           shipping_address: Json
           shipping_total: number
@@ -286,6 +293,9 @@ export type Database = {
         }
         Insert: {
           billing_address: Json
+          comgate_last_status_response?: Json | null
+          comgate_redirect_url?: string | null
+          comgate_trans_id?: string | null
           created_at?: string
           currency?: string
           customer_note?: string | null
@@ -294,7 +304,11 @@ export type Database = {
           grand_total: number
           id?: string
           order_number: string
+          payment_access_token_hash?: string | null
+          payment_method?: string
+          payment_paid_at?: string | null
           payment_status?: string
+          payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address: Json
           shipping_total?: number
@@ -306,6 +320,9 @@ export type Database = {
         }
         Update: {
           billing_address?: Json
+          comgate_last_status_response?: Json | null
+          comgate_redirect_url?: string | null
+          comgate_trans_id?: string | null
           created_at?: string
           currency?: string
           customer_note?: string | null
@@ -314,7 +331,11 @@ export type Database = {
           grand_total?: number
           id?: string
           order_number?: string
+          payment_access_token_hash?: string | null
+          payment_method?: string
+          payment_paid_at?: string | null
           payment_status?: string
+          payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address?: Json
           shipping_total?: number
@@ -649,4 +670,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

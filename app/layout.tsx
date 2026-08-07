@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
+import { SiteFooter } from "@/components/site-footer";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin", "latin-ext"] });
 
@@ -27,5 +28,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="sk"><body className={geist.variable}><CartProvider>{children}</CartProvider></body></html>;
+  return <html lang="sk"><body className={geist.variable}><CartProvider>{children}<SiteFooter /></CartProvider></body></html>;
 }

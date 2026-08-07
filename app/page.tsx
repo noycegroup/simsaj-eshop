@@ -148,16 +148,6 @@ export default function Home() {
         <div className="review-grid">{reviews.map((review) => <blockquote key={review.name}><div aria-label="5 z 5 hviezdičiek">★★★★★</div><p>„{review.text}“</p><cite>{review.name}</cite></blockquote>)}</div>
       </section>
 
-      <footer id="kontakt">
-        <div className="footer-grid">
-          <div className="footer-brand"><Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ" width={180} height={83} unoptimized /><p>Špecializovaná predajňa ortopedickej obuvi, zdravotníckych ponožiek a odborného poradenstva.</p></div>
-          <div><h2>Kontakt</h2><p>SIMSAJ s.r.o.<br />17. novembra 1300<br />958 01 Topoľčany</p><p><a href="tel:+421905123456">+421 905 123 456</a><br /><a href="mailto:info@simsaj.sk">info@simsaj.sk</a></p></div>
-          <div><h2>Otváracie hodiny</h2><p>Po – Pia: 9:00 – 18:00<br />So: 9:00 – 13:00<br />Ne: Zatvorené</p><a className="footer-button" href="#hodiny">Aktuálne otváracie hodiny</a></div>
-          <div><h2>Užitočné odkazy</h2><ul><li><a href="#podmienky">Obchodné podmienky</a></li><li><a href="#reklamacie">Reklamačný poriadok</a></li><li><a href="#ochrana">Ochrana osobných údajov</a></li><li><a href="#doprava">Doprava a platba</a></li><li><a href="#vratenie">Vrátenie tovaru</a></li></ul></div>
-          <div><h2>Predajňa</h2><div className="map-placeholder"><span>SIMSAJ</span><small>Topoľčany</small><a href="#mapa">Zobraziť na mape</a></div></div>
-        </div>
-        <div className="footer-bottom"><span>© 2026 SIMSAJ s.r.o. Všetky práva vyhradené.</span><span>VISA · Mastercard · Apple Pay · Google Pay</span></div>
-      </footer>
     </main>
   );
 }

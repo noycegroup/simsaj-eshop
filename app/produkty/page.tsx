@@ -42,7 +42,7 @@ export default async function ProductsPage() {
               <article className="product-card" key={product.id}>
                 {workingProduct ? (
                   <div className="product-image">
-                    <Image src={workingProduct.image} alt={`${product.name} – ilustračná fotografia obuvi Diawin`} fill sizes="(max-width: 700px) 50vw, (max-width: 980px) 33vw, 25vw" />
+                    <Image src={workingProduct.image} alt={`${product.name} – ilustračná fotografia obuvi Diawin`} fill sizes="(max-width: 700px) 50vw, (max-width: 980px) 33vw, 25vw" unoptimized />
                     <span>Ilustračné foto</span>
                   </div>
                 ) : null}

@@ -94,6 +94,13 @@ Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady
 - Prepojiť Google Search Console a skontrolovať indexáciu a štruktúrované dáta.
 - Pripraviť produktový feed pre Google Merchant Center.
 - Podľa obchodnej stratégie zapojiť Meta Pixel, Heureku, Pricemaniu a prípadne Glami.
+- Adaptovať z projektu `noycegroup/hravosdetmi-remake` produktový XML feed pre Heureku a samostatný feed dostupnosti.
+- Adaptovať Heureka meranie detailu produktu a konverzie objednávky; kľúč a identifikátory nastaviť pre SIMSAJ, nie pre pôvodný e-shop.
+- Integrovať program Heureka Overené zákazníkmi vrátane možnosti odmietnuť dotazník priamo v pokladni.
+- Odosielať objednávku do programu Overené zákazníkmi až po správnej obchodnej udalosti podľa typu platby, napríklad po potvrdení kartovej platby.
+- Evidovať stav odoslania do Heureky (`pending`, `sending`, `sent`, `failed`, `skipped`), počet pokusov, poslednú chybu a odpoveď API.
+- Zabezpečiť idempotentné odoslanie konverzie aj dotazníka, aby obnovenie stránky alebo opakovaný webhook nevytvorili duplicitu.
+- Podmieniť marketingové a konverzné skripty platným cookie súhlasom a aktualizovať informácie o ochrane osobných údajov.
 - Zaviesť e-mailové scenáre pre opustený košík, následnú starostlivosť a opakovaný nákup.
 - Vytvoriť prehľad kľúčových ukazovateľov: obrat, konverzia, priemerná objednávka, rezervácie a návratnosť kampaní.
 
@@ -175,6 +182,7 @@ Admin rozhranie má postupne obsahovať:
 
 - Produkčné platby, doprava, e-maily a správa objednávok.
 - Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
+- Heureka konverzia a Overené zákazníkmi prepojené so stavom objednávky a platby.
 - Otestované chybové situácie, refundácie, vratky a reklamácie.
 
 ### M5 – SIMSAJ služby
@@ -213,6 +221,10 @@ Pri administrácii objednávok a SuperFaktúre vychádzame z už overenej implem
 - povolené prechody stavov `new`, `processing`, `shipped`, `completed`, `cancelled`,
 - zákaznícke notifikácie pri zmene stavu,
 - ochrana administrátorských stránok a API pred neprihláseným používateľom.
+- generovanie produktového a dostupnostného XML feedu pre Heureku,
+- klientské meranie detailu produktu a dokončenej objednávky,
+- serverové odoslanie objednávky do programu Heureka Overené zákazníkmi,
+- opt-out voľba v pokladni a evidencia stavu, pokusov a chýb integrácie.
 
 ### Povinné úpravy pre SIMSAJ
 
@@ -222,3 +234,6 @@ Pri administrácii objednávok a SuperFaktúre vychádzame z už overenej implem
 - doplniť idempotentný kľúč a kontrolu existujúcej faktúry pred každým opakovaným pokusom,
 - zakázať trvalé mazanie objednávok v bežnom rozhraní; používať storno alebo archiváciu kvôli účtovníctvu a auditu,
 - oddeliť vytvorenie objednávky od externých integrácií tak, aby výpadok SuperFaktúry nestratil objednávku ani nezablokoval potvrdenie zákazníkovi.
+- nahradiť Heureka kľúč pôvodného e-shopu konfiguráciou SIMSAJ a neposielať žiadne testovacie objednávky do produkčného účtu,
+- mapovať SIMSAJ SKU, ceny, dostupnosť a URL produktov do formátu Heureky a validovať feed pred publikovaním,
+- aktivovať konverzné skripty len podľa pravidiel súhlasu a odoslať dotazník iba zákazníkom, ktorí ho neodmietli.

@@ -92,7 +92,7 @@ footer { margin-top: 30px; padding: 54px max(24px, calc((100vw - 1320px)/2)) 20p
 .catalog-notice strong { text-transform: uppercase; letter-spacing: .06em; }
 .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
 .product-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
-.product-image { position: relative; min-height: 245px; overflow: hidden; background: #eef2f0; }
+.product-image { position: relative; min-height: 245px; display: block; overflow: hidden; background: #eef2f0; }
 .product-image img { object-fit: cover; transition: transform .25s ease; }
 .product-card:hover .product-image img { transform: scale(1.025); }
 .product-image > span { position: absolute; left: 12px; bottom: 12px; padding: 5px 8px; border-radius: 999px; background: #ffffffde; color: var(--muted); font-size: 10px; font-weight: 750; }

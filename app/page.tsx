@@ -41,7 +41,7 @@ export default function Home() {
 
       <header className="site-header">
         <a href="#" className="brand" aria-label="SIMSAJ – domov">
-          <Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ – pre vaše nohy" width={230} height={106} priority />
+          <Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ – pre vaše nohy" width={230} height={106} priority unoptimized />
         </a>
         <form className="search" role="search">
           <label className="sr-only" htmlFor="site-search">Hľadať produkty</label>
@@ -79,7 +79,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-media">
-          <Image src="/reference/simsaj-02.jpeg" alt="Prémiová zdravotná obuv SIMSAJ" fill sizes="(max-width: 760px) 100vw, 58vw" priority />
+          <Image src="/reference/simsaj-02.jpeg" alt="Prémiová zdravotná obuv SIMSAJ" fill sizes="(max-width: 760px) 100vw, 58vw" priority unoptimized />
           <div className="hero-badge"><strong>⌁</strong><span>Profesionálne<br />meranie chodidiel</span></div>
         </div>
       </section>
@@ -127,7 +127,7 @@ export default function Home() {
       </section>
 
       <section className="premium section" aria-labelledby="premium-title">
-        <div className="premium-image"><Image src="/reference/simsaj-04.jpeg" alt="Kolekcia luxusnej zdravotnej obuvi SIMSAJ" fill sizes="(max-width: 900px) 100vw, 55vw" /></div>
+        <div className="premium-image"><Image src="/reference/simsaj-04.jpeg" alt="Kolekcia luxusnej zdravotnej obuvi SIMSAJ" fill sizes="(max-width: 900px) 100vw, 55vw" unoptimized /></div>
         <div className="premium-copy"><p className="eyebrow">SIMSAJ HEALTH</p><h2 id="premium-title">Tradícia, zdravie a pohodlie v každom kroku</h2><p>Objavte kolekciu zdravotnej obuvi navrhnutú pre náročných. Dôraz na anatomickú podporu, prémiové materiály a celodenné pohodlie.</p><ul><li>Anatomická podpora chodidla</li><li>Prémiové a odolné materiály</li><li>Modely pre dámy, pánov aj seniorov</li></ul><a className="button primary" href="#kolekcia">Objaviť kolekciu <Arrow /></a></div>
       </section>
 
@@ -150,7 +150,7 @@ export default function Home() {
 
       <footer id="kontakt">
         <div className="footer-grid">
-          <div className="footer-brand"><Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ" width={180} height={83} /><p>Špecializovaná predajňa ortopedickej obuvi, zdravotníckych ponožiek a odborného poradenstva.</p></div>
+          <div className="footer-brand"><Image src="/brand/logo-simsaj-sk.jpeg" alt="SIMSAJ" width={180} height={83} unoptimized /><p>Špecializovaná predajňa ortopedickej obuvi, zdravotníckych ponožiek a odborného poradenstva.</p></div>
           <div><h2>Kontakt</h2><p>SIMSAJ s.r.o.<br />17. novembra 1300<br />958 01 Topoľčany</p><p><a href="tel:+421905123456">+421 905 123 456</a><br /><a href="mailto:info@simsaj.sk">info@simsaj.sk</a></p></div>
           <div><h2>Otváracie hodiny</h2><p>Po – Pia: 9:00 – 18:00<br />So: 9:00 – 13:00<br />Ne: Zatvorené</p><a className="footer-button" href="#hodiny">Aktuálne otváracie hodiny</a></div>
           <div><h2>Užitočné odkazy</h2><ul><li><a href="#podmienky">Obchodné podmienky</a></li><li><a href="#reklamacie">Reklamačný poriadok</a></li><li><a href="#ochrana">Ochrana osobných údajov</a></li><li><a href="#doprava">Doprava a platba</a></li><li><a href="#vratenie">Vrátenie tovaru</a></li></ul></div>

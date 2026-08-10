@@ -78,3 +78,14 @@ test("technical SEO exposes public catalog pages and protects transactional rout
   assert.match(product, /"@type": "BreadcrumbList"/);
   assert.match(product, /if \(!workingProduct\)/);
 });
+
+test("cart removal is a distinct accessible control", async () => {
+  const cart = await readFile(new URL("../app/kosik/page.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(cart, /className="cart-remove-button"/);
+  assert.match(cart, /aria-label=\{`Odstrániť \$\{item\.name\} z košíka`\}/);
+  assert.match(cart, /Odstrániť z košíka/);
+  assert.match(styles, /\.cart-item \.cart-remove-button/);
+  assert.match(styles, /:focus-visible/);
+});

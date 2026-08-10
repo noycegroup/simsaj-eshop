@@ -85,7 +85,9 @@ test("cart removal is a distinct accessible control", async () => {
 
   assert.match(cart, /className="cart-remove-button"/);
   assert.match(cart, /aria-label=\{`Odstrániť \$\{item\.name\} z košíka`\}/);
-  assert.match(cart, /Odstrániť z košíka/);
+  assert.match(cart, /className="cart-item-actions"/);
+  assert.match(cart, /<strong>\{money\.format\(item\.price \* item\.quantity\)\}<\/strong><button/);
+  assert.match(cart, /> Odstrániť<\/button>/);
   assert.match(styles, /\.cart-item \.cart-remove-button/);
   assert.match(styles, /:focus-visible/);
 });

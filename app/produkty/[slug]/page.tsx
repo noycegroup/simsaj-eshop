@@ -4,9 +4,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductConfigurator } from "@/components/product-configurator";
 import { SiteHeader } from "@/components/site-header";
+import { StructuredData } from "@/components/structured-data";
 import { catalogSuggestions } from "@/lib/catalog-suggestions";
 import { diawinWorkingCatalog, formatWorkingPrice } from "@/lib/diawin-working-catalog";
 import { createClient } from "@/lib/supabase/server";
+import { absoluteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -28,7 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return { title: "Produkt sa nenašiel | SIMSAJ" };
   const workingProduct = diawinWorkingCatalog[product.name];
   const image = workingProduct?.image ?? [...product.product_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path;
-  return { title: `${product.name} | SIMSAJ`, description: product.short_description ?? undefined, openGraph: image ? { images: [image] } : undefined };
+  return {
+    title: `${product.name} | SIMSAJ`,
+    description: product.seo_description ?? product.short_description ?? undefined,
+    alternates: { canonical: `/produkty/${product.slug}` },
+    openGraph: image ? { title: product.name, description: product.short_description ?? undefined, images: [image] } : undefined,
+  };
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -44,7 +51,37 @@ export default async function ProductDetailPage({ params }: Props) {
   const model = workingProduct?.model ?? "SVORTO";
   if (!image || !Number.isFinite(price) || !sizes.length) notFound();
 
+  const productStructuredData: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? product.short_description ?? undefined,
+    image: [image.startsWith("http") ? image : absoluteUrl(image)],
+    sku: activeVariants[0]?.sku,
+    brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+    url: absoluteUrl(`/produkty/${product.slug}`),
+  };
+  if (!workingProduct) {
+    productStructuredData.offers = {
+      "@type": "Offer",
+      priceCurrency: "EUR",
+      price,
+      availability: activeVariants.length ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: absoluteUrl(`/produkty/${product.slug}`),
+    };
+  }
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Domov", item: absoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "Produkty", item: absoluteUrl("/produkty") },
+      { "@type": "ListItem", position: 3, name: product.name, item: absoluteUrl(`/produkty/${product.slug}`) },
+    ],
+  };
+
   return (<>
+    <StructuredData data={[productStructuredData, breadcrumbStructuredData]} />
     <SiteHeader suggestions={suggestions} />
     <main className="detail-page">
       <div className="detail-toolbar"><Link href="/produkty">← Všetky produkty</Link></div>

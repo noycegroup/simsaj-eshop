@@ -3,11 +3,13 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 import { SiteFooter } from "@/components/site-footer";
+import { StructuredData } from "@/components/structured-data";
+import { absoluteUrl, siteUrl } from "@/lib/site";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://simsaj.sk"),
+  metadataBase: new URL(siteUrl),
   title: "SIMSAJ – Zdravie začína od nôh",
   description: "Ortopedická a zdravotná obuv, vložky, ponožky, meranie chodidiel a odborné poradenstvo.",
   icons: { icon: "/favicon.svg" },
@@ -28,5 +30,31 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="sk"><body className={geist.variable}><CartProvider>{children}<SiteFooter /></CartProvider></body></html>;
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "SIMSAJ",
+      url: siteUrl,
+      logo: absoluteUrl("/brand/logo-simsaj-sk.jpeg"),
+      description: metadata.description,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: "SIMSAJ",
+      url: siteUrl,
+      inLanguage: "sk-SK",
+      publisher: { "@id": `${siteUrl}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${absoluteUrl("/produkty")}?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
+
+  return <html lang="sk"><body className={geist.variable}><StructuredData data={structuredData} /><CartProvider>{children}<SiteFooter /></CartProvider></body></html>;
 }

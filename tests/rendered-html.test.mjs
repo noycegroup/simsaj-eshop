@@ -62,3 +62,19 @@ test("SVORTO import keeps B2B data private and exposes customer catalog data", a
   assert.match(importer, /pg_try_advisory_lock/);
   assert.doesNotMatch(importer, /b2b_feed\.php\?key=/);
 });
+
+test("technical SEO exposes public catalog pages and protects transactional routes", async () => {
+  const sitemap = await readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8");
+  const robots = await readFile(new URL("../app/robots.ts", import.meta.url), "utf8");
+  const product = await readFile(new URL("../app/produkty/[slug]/page.tsx", import.meta.url), "utf8");
+
+  assert.match(sitemap, /\.eq\("status", "active"\)/);
+  assert.match(sitemap, /\/produkty\/\$\{product\.slug\}/);
+  for (const route of ["/admin", "/api/", "/kosik", "/pokladna", "/platba/"]) {
+    assert.match(robots, new RegExp(route.replaceAll("/", "\\/")));
+  }
+  assert.match(product, /alternates: \{ canonical:/);
+  assert.match(product, /"@type": "Product"/);
+  assert.match(product, /"@type": "BreadcrumbList"/);
+  assert.match(product, /if \(!workingProduct\)/);
+});

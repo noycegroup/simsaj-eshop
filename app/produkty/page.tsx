@@ -10,6 +10,7 @@ import { catalogSuggestions } from "@/lib/catalog-suggestions";
 export const metadata: Metadata = {
   title: "Produkty Diawin a SVORTO | SIMSAJ",
   description: "Zdravotná obuv Diawin, ortopedické vložky a pomôcky SVORTO v katalógu SIMSAJ.",
+  alternates: { canonical: "/produkty" },
 };
 
 export const dynamic = "force-dynamic";

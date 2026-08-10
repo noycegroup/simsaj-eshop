@@ -7,7 +7,7 @@ Vybudovať dôveryhodný, rýchly a jednoducho spravovateľný e-shop pre SIMSAJ
 ## Aktuálny stav
 
 - **M0 – dokončený:** repozitár, roadmapa a základná dokumentácia.
-- **M1 – rozpracovaný:** aplikácia, databáza a hosting sú online; zostáva administrátorské prihlásenie a úplné SEO minimum.
+- **M1 – takmer dokončený:** aplikácia, databáza a hosting sú online; technické SEO minimum (kanonické URL, Open Graph, sitemap, robots.txt a Schema.org) je zapracované. Zostáva rolové administrátorské prihlásenie cez Supabase Auth.
 - **M2 – funkčný prototyp:** katalóg, detail produktu, výber veľkosti a šírky, lokálny skúšobný košík a nezáväzná pokladňa.
 - **M3 – rozpracovaný:** partneri Diawin a SVORTO sú importovaní; katalóg má vyhľadávanie, filtre a radenie. SVORTO dodáva ceny, obrázky, parametre a 594 skladových variantov. Pripravená je bezpečná automatická synchronizácia a chránený administračný prehľad; zostáva pripojiť súkromnú históriu behov a editáciu produktov.
 

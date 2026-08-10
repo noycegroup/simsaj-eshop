@@ -5,6 +5,7 @@ import { requireChatGPTUser, chatGPTSignOutPath } from "@/app/chatgpt-auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { diawinWorkingCatalog } from "@/lib/diawin-working-catalog";
+import type { Database } from "@/lib/supabase/database.types";
 
 export const metadata: Metadata = { title: "Administrácia | SIMSAJ", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -29,10 +30,16 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     purchase_price: null as number | null,
   }));
   let error = publicResult.error;
+  let importHistory: Database["public"]["Views"]["admin_feed_import_history"]["Row"][] = [];
   if (process.env.SUPABASE_SECRET_KEY) {
-    const privateResult = await createAdminClient().from("admin_product_feed_catalog").select("*").order("updated_at", { ascending: false });
+    const adminClient = createAdminClient();
+    const [privateResult, historyResult] = await Promise.all([
+      adminClient.from("admin_product_feed_catalog").select("*").order("updated_at", { ascending: false }),
+      adminClient.from("admin_feed_import_history").select("*").order("started_at", { ascending: false }).limit(10),
+    ]);
     if (!privateResult.error && privateResult.data) products = privateResult.data;
     else error = privateResult.error;
+    if (!historyResult.error && historyResult.data) importHistory = historyResult.data;
   }
 
   const visibleProducts = (products ?? []).filter((product) => {
@@ -64,7 +71,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </tr>; })}
         </tbody></table>{visibleProducts.length === 0 ? <p className="admin-message">Pre toto vyhľadávanie sme nenašli produkt.</p> : null}</div>}
       </section>
-      <section className="admin-panel admin-feed-panel"><div><p className="eyebrow">AUTOMATIZÁCIA</p><h2>Synchronizácia partnerov</h2><p>Importy Diawin a SVORTO kontrolujú identifikátory, preskakujú nezmenené feedy a zabraňujú súbežnému spusteniu.</p></div><ol><li><span>1</span>SVORTO: 160 produktov importovaných</li><li><span>2</span>SVORTO: 594 variantov a 881 fotografií</li><li><span>3</span>Denný plán pripravený na bezpečnú aktiváciu</li></ol></section>
+      <section className="admin-panel admin-feed-history">
+        <div className="admin-panel-heading"><div><p className="eyebrow">AUTOMATIZÁCIA</p><h2>História importov partnerov</h2><p>Skutočné výsledky posledných behov XML synchronizácie.</p></div><span className="admin-history-count">Posledných {importHistory.length} behov</span></div>
+        {importHistory.length ? <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Partner</th><th>Stav</th><th>Produkty</th><th>Varianty</th><th>Chyby</th><th>Trvanie</th><th>Spustené</th><th>Poznámka</th></tr></thead><tbody>{importHistory.map((run) => <tr key={run.id}>
+          <td><strong>{run.supplier_name}</strong></td><td><span className={`admin-badge ${run.status === "succeeded" ? "complete" : "incomplete"}`}>{run.status === "succeeded" ? "Úspešný" : run.status === "running" ? "Prebieha" : "Chyba"}</span></td><td>{run.product_count}</td><td>{run.variant_count}</td><td>{run.error_count}</td><td>{run.duration_seconds == null ? "—" : `${run.duration_seconds} s`}</td><td>{new Intl.DateTimeFormat("sk-SK", { dateStyle: "short", timeStyle: "short" }).format(new Date(run.started_at))}</td><td className="admin-run-note">{run.notes ?? "—"}</td>
+        </tr>)}</tbody></table></div> : <p className="admin-message">História importov bude dostupná po pripojení serverového prístupu k databáze.</p>}
+      </section>
     </section>
   </main>;
 }

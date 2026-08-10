@@ -49,7 +49,7 @@ test("admin catalog is server protected and excluded from search", async () => {
   assert.match(page, /requireChatGPTUser\("\/admin"\)/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
   assert.match(page, /\.from\("products"\)/);
-  assert.match(page, /Synchronizácia partnerov/);
+  assert.match(page, /História importov partnerov/);
 });
 
 test("SVORTO import keeps B2B data private and exposes customer catalog data", async () => {
@@ -90,4 +90,15 @@ test("cart removal is a distinct accessible control", async () => {
   assert.match(cart, /> Odstrániť<\/button>/);
   assert.match(styles, /\.cart-item \.cart-remove-button/);
   assert.match(styles, /:focus-visible/);
+});
+
+test("admin shows private XML import history", async () => {
+  const admin = await readFile(new URL("../app/admin/page.tsx", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../supabase/migrations/20260810092331_add_admin_feed_import_history.sql", import.meta.url), "utf8");
+
+  assert.match(admin, /admin_feed_import_history/);
+  assert.match(admin, /História importov partnerov/);
+  assert.match(migration, /with \(security_invoker = true\)/);
+  assert.match(migration, /revoke all on public\.admin_feed_import_history from anon, authenticated/);
+  assert.match(migration, /grant select on public\.admin_feed_import_history to service_role/);
 });

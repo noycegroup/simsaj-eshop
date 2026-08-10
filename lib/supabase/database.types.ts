@@ -549,6 +549,22 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_feed_import_history: {
+        Row: {
+          duration_seconds: number | null
+          error_count: number
+          finished_at: string | null
+          id: string
+          notes: string | null
+          product_count: number
+          started_at: string
+          status: string
+          supplier_code: string
+          supplier_name: string
+          variant_count: number
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

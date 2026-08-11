@@ -276,6 +276,7 @@ export type Database = {
           email: string
           grand_total: number
           id: string
+          is_test: boolean
           order_number: string
           payment_access_token_hash: string | null
           payment_method: string
@@ -284,6 +285,7 @@ export type Database = {
           payment_status_updated_at: string | null
           placed_at: string | null
           shipping_address: Json
+          shipping_method: string
           shipping_total: number
           status: string
           subtotal: number
@@ -303,6 +305,7 @@ export type Database = {
           email: string
           grand_total: number
           id?: string
+          is_test?: boolean
           order_number: string
           payment_access_token_hash?: string | null
           payment_method?: string
@@ -311,6 +314,7 @@ export type Database = {
           payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address: Json
+          shipping_method?: string
           shipping_total?: number
           status?: string
           subtotal: number
@@ -330,6 +334,7 @@ export type Database = {
           email?: string
           grand_total?: number
           id?: string
+          is_test?: boolean
           order_number?: string
           payment_access_token_hash?: string | null
           payment_method?: string
@@ -338,6 +343,7 @@ export type Database = {
           payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address?: Json
+          shipping_method?: string
           shipping_total?: number
           status?: string
           subtotal?: number
@@ -642,6 +648,15 @@ export type Database = {
           p_status: string
         }
         Returns: string
+      }
+      create_test_order: {
+        Args: {
+          p_billing_address: Json
+          p_email: string
+          p_items: Json
+          p_shipping_address: Json
+        }
+        Returns: Json
       }
     }
     Enums: {

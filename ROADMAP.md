@@ -45,7 +45,7 @@ Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady
 - Riešiť duplicity, chýbajúce údaje, zmeny dostupnosti a chybové záznamy importu.
 - Umožniť ručné úpravy, schválenie produktu a ochranu vybraných údajov pred prepísaním feedom.
 - Pripraviť filtre, radenie, fulltextové vyhľadávanie a súvisiace produkty.
-- Nastaviť pravidelné synchronizácie a upozornenia na neúspešný import.
+- Zachovať manuálne spúšťanie synchronizácií a upozornenia na neúspešný import; pravidelný plán je na rozhodnutie majiteľa dočasne vypnutý.
 
 **Výstup:** spoľahlivo synchronizovaný a spravovateľný produktový katalóg.
 
@@ -180,6 +180,7 @@ Admin rozhranie má postupne obsahovať:
 
 ### M4 – Objednávky od začiatku do konca
 
+- Ukladať nezáväzné skúšobné objednávky do databázy, jasne ich označiť a zobraziť v administrácii bez spustenia platieb či fakturácie. (hotové)
 - Produkčné platby, doprava, e-maily a správa objednávok.
 - Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
 - Heureka konverzia a Overené zákazníkmi prepojené so stavom objednávky a platby.

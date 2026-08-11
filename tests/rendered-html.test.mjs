@@ -122,3 +122,20 @@ test("admin product editing is protected, audited, and feed-safe", async () => {
   assert.match(svorto, /product_manual_overrides/);
   assert.match(diawin, /product_manual_overrides/);
 });
+
+test("test checkout persists orders without activating payment integrations", async () => {
+  const checkout = await readFile(new URL("../app/pokladna/page.tsx", import.meta.url), "utf8");
+  const route = await readFile(new URL("../app/api/objednavky/skusobna/route.ts", import.meta.url), "utf8");
+  const admin = await readFile(new URL("../app/admin/objednavky/page.tsx", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../supabase/migrations/20260811114500_add_test_order_checkout.sql", import.meta.url), "utf8");
+
+  assert.match(checkout, /\/api\/objednavky\/skusobna/);
+  assert.match(checkout, /Platba, fakturácia ani expedícia neboli spustené/);
+  assert.match(route, /diawinWorkingCatalog/);
+  assert.match(route, /admin\.rpc\("create_test_order"/);
+  assert.match(admin, /requireChatGPTUser\("\/admin\/objednavky"\)/);
+  assert.match(migration, /is_test boolean not null default false/);
+  assert.match(migration, /security invoker/);
+  assert.match(migration, /revoke all on function public\.create_test_order.*from public, anon, authenticated/);
+  assert.doesNotMatch(route, /comgate|superfaktura|heureka/i);
+});

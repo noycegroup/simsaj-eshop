@@ -54,12 +54,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       <div className="admin-user"><span>{user.displayName}</span><a href={chatGPTSignOutPath("/")}>Odhlásiť</a></div>
     </header>
     <section className="admin-shell">
-      <div className="admin-title"><div><p className="eyebrow">MÍĽNIK M3 · KATALÓG</p><h1>Produkty a feedy</h1><p>Kontrola produktov pripravených z partnerských XML zdrojov.</p></div><Link className="button primary" href="/produkty">Otvoriť katalóg</Link></div>
+      <div className="admin-title"><div><p className="eyebrow">MÍĽNIK M3 · KATALÓG</p><h1>Produkty a feedy</h1><p>Kontrola produktov pripravených z partnerských XML zdrojov.</p></div><div className="admin-title-actions"><Link className="button secondary" href="/admin/objednavky">Objednávky</Link><Link className="button primary" href="/produkty">Otvoriť katalóg</Link></div></div>
       <div className="admin-stats">
         <article><span>Produkty</span><strong>{products?.length ?? 0}</strong><small>v databáze</small></article>
         <article><span>Pracovné podklady</span><strong>{readyCount}</strong><small>s cenou a fotografiou</small></article>
         <article><span>Partneri</span><strong>2</strong><small>Diawin a SVORTO</small></article>
-        <article><span>Synchronizácia</span><strong className="admin-status-ready">Pripravená</strong><small>aktivácia po dodaní URL</small></article>
+        <article><span>Synchronizácia</span><strong className="admin-status-ready">Manuálna</strong><small>pravidelný plán je vypnutý</small></article>
       </div>
       <section className="admin-panel">
         <div className="admin-panel-heading"><div><h2>Produktový katalóg</h2><p>Vyhľadávanie podľa názvu, značky alebo modelu.</p></div><form action="/admin"><label className="sr-only" htmlFor="admin-search">Hľadať produkt</label><input id="admin-search" name="q" type="search" defaultValue={rawQuery} placeholder="Názov alebo kód modelu" /><button type="submit">Hľadať</button></form></div>

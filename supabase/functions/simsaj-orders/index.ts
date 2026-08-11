@@ -33,7 +33,7 @@ Deno.serve(async (request) => {
     const orderId = new URL(request.url).searchParams.get("id") ?? "";
     const [{ data: order, error }, { data: audit }] = await Promise.all([
       supabase.from("orders")
-        .select("id,order_number,email,status,payment_status,payment_method,grand_total,subtotal,shipping_total,discount_total,tax_total,currency,created_at,placed_at,is_test,shipping_method,shipping_carrier,tracking_number,shipped_at,shipping_address,billing_address,customer_note,order_items(id,product_name,variant_name,sku,quantity,unit_price,line_total,vat_rate)")
+        .select("id,order_number,email,status,payment_status,payment_method,grand_total,subtotal,shipping_total,discount_total,tax_total,currency,created_at,placed_at,is_test,shipping_method,shipping_carrier,tracking_number,shipped_at,packeta_point_id,packeta_point_name,packeta_point_place,packeta_point_city,packeta_point_zip,shipping_address,billing_address,customer_note,order_items(id,product_name,variant_name,sku,quantity,unit_price,line_total,vat_rate)")
         .eq("id", orderId).maybeSingle(),
       supabase.from("admin_audit_log").select("id,action,actor_email,changes,created_at").eq("entity_type", "order").eq("entity_id", orderId).order("created_at", { ascending: false }),
     ]);
@@ -50,12 +50,14 @@ Deno.serve(async (request) => {
   }
 
   if (request.method === "POST") {
-    let body: { email?: string; billingAddress?: unknown; shippingAddress?: unknown; items?: unknown };
+    let body: { email?: string; billingAddress?: unknown; shippingAddress?: unknown; shippingMethod?: string; packetaPoint?: unknown; items?: unknown };
     try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
     const { data, error } = await supabase.rpc("create_test_order", {
       p_email: body.email ?? "",
       p_billing_address: body.billingAddress,
       p_shipping_address: body.shippingAddress,
+      p_shipping_method: body.shippingMethod ?? "personal_pickup",
+      p_packeta_point: body.packetaPoint ?? null,
       p_items: body.items,
     });
     return error ? json({ error: "Order could not be created" }, 400) : json(data, 201);

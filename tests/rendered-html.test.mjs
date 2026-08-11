@@ -139,3 +139,15 @@ test("test checkout persists orders without activating payment integrations", as
   assert.match(migration, /revoke all on function public\.create_test_order.*from public, anon, authenticated/);
   assert.doesNotMatch(route, /comgate|superfaktura|heureka/i);
 });
+
+test("checkout offers personal pickup, Packeta point selection and GLS", async () => {
+  const checkout = await readFile(new URL("../app/pokladna/page.tsx", import.meta.url), "utf8");
+  const route = await readFile(new URL("../app/api/objednavky/skusobna/route.ts", import.meta.url), "utf8");
+  const gls = await readFile(new URL("../lib/server/gls.ts", import.meta.url), "utf8");
+  assert.match(checkout, /Osobný odber v kamennej predajni/);
+  assert.match(checkout, /Packeta\.Widget\.pick/);
+  assert.match(checkout, /Kuriér GLS na adresu/);
+  assert.match(route, /Vyberte platné výdajné miesto Packety/);
+  assert.match(gls, /GLS_CLIENT_NUMBER/);
+  assert.doesNotMatch(gls, /hravosdetmi/i);
+});

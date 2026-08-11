@@ -21,6 +21,9 @@ type SubmittedCustomer = {
   city?: unknown;
 };
 
+type SubmittedPacketaPoint = { id?: unknown; name?: unknown; place?: unknown; city?: unknown; zip?: unknown; country?: unknown };
+const allowedShipping = new Set(["personal_pickup", "packeta", "gls"]);
+
 const clean = (value: unknown, max: number) => typeof value === "string" ? value.trim().slice(0, max) : "";
 
 export async function POST(request: NextRequest) {
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Požiadavka nepochádza z tejto stránky." }, { status: 403 });
   }
 
-  let body: { customer?: SubmittedCustomer; items?: SubmittedItem[] };
+  let body: { customer?: SubmittedCustomer; shipping?: unknown; packetaPoint?: SubmittedPacketaPoint | null; items?: SubmittedItem[] };
   try {
     body = await request.json();
   } catch {
@@ -53,6 +56,15 @@ export async function POST(request: NextRequest) {
   }
   if (!Array.isArray(body.items) || body.items.length < 1 || body.items.length > 50) {
     return NextResponse.json({ error: "Košík je prázdny alebo obsahuje priveľa položiek." }, { status: 400 });
+  }
+  const shipping = clean(body.shipping, 40);
+  if (!allowedShipping.has(shipping)) return NextResponse.json({ error: "Vyberte platný spôsob dopravy." }, { status: 400 });
+  const packetaPoint = shipping === "packeta" ? {
+    id: clean(String(body.packetaPoint?.id ?? ""), 40), name: clean(body.packetaPoint?.name, 200), place: clean(body.packetaPoint?.place, 200),
+    city: clean(body.packetaPoint?.city, 100), zip: clean(body.packetaPoint?.zip, 20), country: clean(body.packetaPoint?.country, 10).toLowerCase(),
+  } : null;
+  if (shipping === "packeta" && (!packetaPoint?.id || !packetaPoint.name || !packetaPoint.city || !packetaPoint.zip)) {
+    return NextResponse.json({ error: "Vyberte platné výdajné miesto Packety." }, { status: 400 });
   }
 
   const requested = body.items.map((item) => ({
@@ -97,6 +109,8 @@ export async function POST(request: NextRequest) {
       email: customer.email,
       billingAddress: address,
       shippingAddress: address,
+      shippingMethod: shipping,
+      packetaPoint,
       items: normalizedItems,
     });
     return NextResponse.json(data, { status: 201 });

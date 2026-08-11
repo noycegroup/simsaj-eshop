@@ -278,6 +278,13 @@ export type Database = {
           id: string
           is_test: boolean
           order_number: string
+          packeta_point_city: string | null
+          packeta_point_country: string | null
+          packeta_point_data: Json | null
+          packeta_point_id: string | null
+          packeta_point_name: string | null
+          packeta_point_place: string | null
+          packeta_point_zip: string | null
           payment_access_token_hash: string | null
           payment_method: string
           payment_paid_at: string | null
@@ -310,6 +317,13 @@ export type Database = {
           id?: string
           is_test?: boolean
           order_number: string
+          packeta_point_city?: string | null
+          packeta_point_country?: string | null
+          packeta_point_data?: Json | null
+          packeta_point_id?: string | null
+          packeta_point_name?: string | null
+          packeta_point_place?: string | null
+          packeta_point_zip?: string | null
           payment_access_token_hash?: string | null
           payment_method?: string
           payment_paid_at?: string | null
@@ -342,6 +356,13 @@ export type Database = {
           id?: string
           is_test?: boolean
           order_number?: string
+          packeta_point_city?: string | null
+          packeta_point_country?: string | null
+          packeta_point_data?: Json | null
+          packeta_point_id?: string | null
+          packeta_point_name?: string | null
+          packeta_point_place?: string | null
+          packeta_point_zip?: string | null
           payment_access_token_hash?: string | null
           payment_method?: string
           payment_paid_at?: string | null
@@ -682,7 +703,9 @@ export type Database = {
           p_billing_address: Json
           p_email: string
           p_items: Json
+          p_packeta_point: Json
           p_shipping_address: Json
+          p_shipping_method: string
         }
         Returns: Json
       }

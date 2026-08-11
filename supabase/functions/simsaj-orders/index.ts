@@ -33,7 +33,7 @@ Deno.serve(async (request) => {
     const orderId = new URL(request.url).searchParams.get("id") ?? "";
     const [{ data: order, error }, { data: audit }] = await Promise.all([
       supabase.from("orders")
-        .select("id,order_number,email,status,payment_status,payment_method,grand_total,subtotal,shipping_total,discount_total,tax_total,currency,created_at,placed_at,is_test,shipping_method,shipping_address,billing_address,customer_note,order_items(id,product_name,variant_name,sku,quantity,unit_price,line_total,vat_rate)")
+        .select("id,order_number,email,status,payment_status,payment_method,grand_total,subtotal,shipping_total,discount_total,tax_total,currency,created_at,placed_at,is_test,shipping_method,shipping_carrier,tracking_number,shipped_at,shipping_address,billing_address,customer_note,order_items(id,product_name,variant_name,sku,quantity,unit_price,line_total,vat_rate)")
         .eq("id", orderId).maybeSingle(),
       supabase.from("admin_audit_log").select("id,action,actor_email,changes,created_at").eq("entity_type", "order").eq("entity_id", orderId).order("created_at", { ascending: false }),
     ]);
@@ -62,9 +62,21 @@ Deno.serve(async (request) => {
   }
 
   if (request.method === "PATCH") {
-    let body: { orderId?: string; status?: string; actorId?: string; actorEmail?: string };
+    let body: { operation?: string; orderId?: string; status?: string; carrier?: string; trackingNumber?: string; actorId?: string; actorEmail?: string };
     try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
-    if (!body.orderId || !body.status || !body.actorId || !body.actorEmail) return json({ error: "Missing fields" }, 400);
+    if (!body.orderId || !body.actorId || !body.actorEmail) return json({ error: "Missing fields" }, 400);
+    if (body.operation === "shipping") {
+      if (!body.carrier) return json({ error: "Missing fields" }, 400);
+      const { data, error } = await supabase.rpc("admin_update_order_shipping", {
+        p_order_id: body.orderId,
+        p_shipping_carrier: body.carrier,
+        p_tracking_number: body.trackingNumber ?? "",
+        p_actor_id: body.actorId,
+        p_actor_email: body.actorEmail,
+      });
+      return error ? json({ error: "Shipping update is not allowed" }, 409) : json({ ok: true, shipping: data });
+    }
+    if (!body.status) return json({ error: "Missing fields" }, 400);
     const { data: status, error } = await supabase.rpc("admin_update_order_status", {
       p_order_id: body.orderId,
       p_status: body.status,

@@ -285,11 +285,14 @@ export type Database = {
           payment_status_updated_at: string | null
           placed_at: string | null
           shipping_address: Json
+          shipped_at: string | null
+          shipping_carrier: string | null
           shipping_method: string
           shipping_total: number
           status: string
           subtotal: number
           tax_total: number
+          tracking_number: string | null
           updated_at: string
           user_id: string | null
         }
@@ -314,11 +317,14 @@ export type Database = {
           payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address: Json
+          shipped_at?: string | null
+          shipping_carrier?: string | null
           shipping_method?: string
           shipping_total?: number
           status?: string
           subtotal: number
           tax_total?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -343,11 +349,14 @@ export type Database = {
           payment_status_updated_at?: string | null
           placed_at?: string | null
           shipping_address?: Json
+          shipped_at?: string | null
+          shipping_carrier?: string | null
           shipping_method?: string
           shipping_total?: number
           status?: string
           subtotal?: number
           tax_total?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -635,6 +644,16 @@ export type Database = {
       }
     }
     Functions: {
+      admin_update_order_shipping: {
+        Args: {
+          p_actor_email: string
+          p_actor_id: string
+          p_order_id: string
+          p_shipping_carrier: string
+          p_tracking_number: string
+        }
+        Returns: Json
+      }
       admin_update_order_status: {
         Args: {
           p_actor_email: string

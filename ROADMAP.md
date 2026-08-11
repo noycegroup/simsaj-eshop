@@ -182,6 +182,7 @@ Admin rozhranie má postupne obsahovať:
 
 - Ukladať nezáväzné skúšobné objednávky do databázy, jasne ich označiť a zobraziť v administrácii bez spustenia platieb či fakturácie. (hotové)
 - Zobraziť detail objednávky, riadené zmeny stavov a auditnú históriu administrátorských zásahov. (hotové pre skúšobné objednávky)
+- Evidovať dopravcu a sledovacie číslo v administrácii vrátane auditnej histórie. (hotové pre skúšobné objednávky)
 - Produkčné platby, doprava, e-maily a správa objednávok.
 - Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
 - Heureka konverzia a Overené zákazníkmi prepojené so stavom objednávky a platby.

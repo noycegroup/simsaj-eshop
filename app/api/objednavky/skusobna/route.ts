@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { callOrdersService } from "@/lib/server/orders-service";
 import { diawinWorkingCatalog } from "@/lib/diawin-working-catalog";
 
 export const runtime = "nodejs";
@@ -64,8 +65,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Niektorá položka košíka nie je platná." }, { status: 400 });
   }
 
-  const admin = createAdminClient();
-  const { data: products, error: productsError } = await admin.from("products")
+  const supabase = await createClient();
+  const { data: products, error: productsError } = await supabase.from("products")
     .select("id,name,slug,status,product_variants(id,name,size,sku,price,vat_rate,is_active)")
     .in("slug", [...new Set(requested.map((item) => item.slug))]);
   if (productsError) return NextResponse.json({ error: "Produkty sa nepodarilo overiť." }, { status: 503 });
@@ -92,13 +93,12 @@ export async function POST(request: NextRequest) {
       };
     });
     const address = { name: customer.name, phone: customer.phone, street: customer.street, postal_code: customer.postal, city: customer.city, country: "SK" };
-    const { data, error } = await admin.rpc("create_test_order", {
-      p_email: customer.email,
-      p_billing_address: address,
-      p_shipping_address: address,
-      p_items: normalizedItems,
+    const data = await callOrdersService<{ orderNumber: string; orderId: string; grandTotal: number }>("POST", {
+      email: customer.email,
+      billingAddress: address,
+      shippingAddress: address,
+      items: normalizedItems,
     });
-    if (error) throw error;
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     const message = error instanceof Error && error.message.length < 180 ? error.message : "Objednávku sa nepodarilo uložiť.";

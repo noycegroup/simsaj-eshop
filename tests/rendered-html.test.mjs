@@ -132,7 +132,7 @@ test("test checkout persists orders without activating payment integrations", as
   assert.match(checkout, /\/api\/objednavky\/skusobna/);
   assert.match(checkout, /Platba, fakturácia ani expedícia neboli spustené/);
   assert.match(route, /diawinWorkingCatalog/);
-  assert.match(route, /admin\.rpc\("create_test_order"/);
+  assert.match(route, /callOrdersService/);
   assert.match(admin, /requireChatGPTUser\("\/admin\/objednavky"\)/);
   assert.match(migration, /is_test boolean not null default false/);
   assert.match(migration, /security invoker/);

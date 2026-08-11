@@ -166,8 +166,8 @@ async function importDiawin(databaseUrl, feed) {
           values
             (${product.name}, ${product.slug}, ${product.description}, ${product.brand}, 'physical', 'active', now())
           on conflict (slug) do update set
-            name = excluded.name,
-            short_description = excluded.short_description,
+            name = case when exists (select 1 from public.product_manual_overrides o where o.product_id = public.products.id and 'name' = any(o.locked_fields)) then public.products.name else excluded.name end,
+            short_description = case when exists (select 1 from public.product_manual_overrides o where o.product_id = public.products.id and 'short_description' = any(o.locked_fields)) then public.products.short_description else excluded.short_description end,
             brand = excluded.brand,
             updated_at = now()
           returning id

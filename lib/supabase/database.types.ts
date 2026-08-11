@@ -484,6 +484,68 @@ export type Database = {
           },
         ]
       }
+      product_manual_overrides: {
+        Row: {
+          locked_fields: string[]
+          product_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          locked_fields?: string[]
+          product_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          locked_fields?: string[]
+          product_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_manual_overrides_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_email: string
+          actor_id: string
+          changes: Json
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_email: string
+          actor_id: string
+          changes: Json
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string
+          actor_id?: string
+          changes?: Json
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           brand: string | null
@@ -567,7 +629,20 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      admin_update_product: {
+        Args: {
+          p_actor_email: string
+          p_actor_id: string
+          p_description: string
+          p_name: string
+          p_product_id: string
+          p_seo_description: string
+          p_seo_title: string
+          p_short_description: string
+          p_status: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

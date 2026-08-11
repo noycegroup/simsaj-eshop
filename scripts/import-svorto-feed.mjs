@@ -119,7 +119,16 @@ async function importSvorto(databaseUrl, feed) {
         const [canonical] = await tx`
           insert into public.products (name,slug,short_description,description,brand,product_type,status,published_at,seo_title,seo_description)
           values (${product.name},${product.slug},${product.shortDescription},${product.description},${product.brand},'physical','active',now(),${`${product.name} | SIMSAJ`},${product.shortDescription.slice(0,160)})
-          on conflict (slug) do update set name=excluded.name,short_description=excluded.short_description,description=excluded.description,brand=excluded.brand,status='active',published_at=coalesce(public.products.published_at,now()),seo_title=excluded.seo_title,seo_description=excluded.seo_description,updated_at=now()
+          on conflict (slug) do update set
+            name=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'name'=any(o.locked_fields)) then public.products.name else excluded.name end,
+            short_description=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'short_description'=any(o.locked_fields)) then public.products.short_description else excluded.short_description end,
+            description=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'description'=any(o.locked_fields)) then public.products.description else excluded.description end,
+            brand=excluded.brand,
+            status=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'status'=any(o.locked_fields)) then public.products.status else 'active' end,
+            published_at=coalesce(public.products.published_at,now()),
+            seo_title=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'seo_title'=any(o.locked_fields)) then public.products.seo_title else excluded.seo_title end,
+            seo_description=case when exists (select 1 from public.product_manual_overrides o where o.product_id=public.products.id and 'seo_description'=any(o.locked_fields)) then public.products.seo_description else excluded.seo_description end,
+            updated_at=now()
           returning id
         `;
         await tx`

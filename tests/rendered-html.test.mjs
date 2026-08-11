@@ -102,3 +102,23 @@ test("admin shows private XML import history", async () => {
   assert.match(migration, /revoke all on public\.admin_feed_import_history from anon, authenticated/);
   assert.match(migration, /grant select on public\.admin_feed_import_history to service_role/);
 });
+
+test("admin product editing is protected, audited, and feed-safe", async () => {
+  const action = await readFile(new URL("../app/admin/produkty/actions.ts", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/admin/produkty/[id]/page.tsx", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../supabase/migrations/20260811075249_add_product_manual_editing.sql", import.meta.url), "utf8");
+  const policies = await readFile(new URL("../supabase/migrations/20260811080330_add_admin_editing_rls_policies.sql", import.meta.url), "utf8");
+  const svorto = await readFile(new URL("../scripts/import-svorto-feed.mjs", import.meta.url), "utf8");
+  const diawin = await readFile(new URL("../scripts/import-partner-feed.mjs", import.meta.url), "utf8");
+
+  assert.match(action, /requireChatGPTUser/);
+  assert.match(action, /admin_update_product/);
+  assert.match(page, /action=\{updateProduct\}/);
+  assert.match(migration, /security invoker/);
+  assert.match(migration, /admin_audit_log/);
+  assert.match(migration, /revoke all on function public\.admin_update_product/);
+  assert.match(policies, /to service_role/);
+  assert.match(policies, /with check \(true\)/);
+  assert.match(svorto, /product_manual_overrides/);
+  assert.match(diawin, /product_manual_overrides/);
+});

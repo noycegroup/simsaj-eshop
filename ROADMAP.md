@@ -181,6 +181,7 @@ Admin rozhranie má postupne obsahovať:
 ### M4 – Objednávky od začiatku do konca
 
 - Ukladať nezáväzné skúšobné objednávky do databázy, jasne ich označiť a zobraziť v administrácii bez spustenia platieb či fakturácie. (hotové)
+- Zobraziť detail objednávky, riadené zmeny stavov a auditnú históriu administrátorských zásahov. (hotové pre skúšobné objednávky)
 - Produkčné platby, doprava, e-maily a správa objednávok.
 - Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
 - Heureka konverzia a Overené zákazníkmi prepojené so stavom objednávky a platby.

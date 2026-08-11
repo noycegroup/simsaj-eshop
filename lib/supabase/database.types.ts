@@ -635,6 +635,15 @@ export type Database = {
       }
     }
     Functions: {
+      admin_update_order_status: {
+        Args: {
+          p_actor_email: string
+          p_actor_id: string
+          p_order_id: string
+          p_status: string
+        }
+        Returns: string
+      }
       admin_update_product: {
         Args: {
           p_actor_email: string

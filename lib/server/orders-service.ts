@@ -4,10 +4,10 @@ function required(name: string) {
   return value;
 }
 
-export async function callOrdersService<T>(method: "GET" | "POST", body?: unknown): Promise<T> {
+export async function callOrdersService<T>(method: "GET" | "POST" | "PATCH", body?: unknown, query = ""): Promise<T> {
   const supabaseUrl = required("NEXT_PUBLIC_SUPABASE_URL");
   const token = required("SIMSAJ_INTERNAL_ORDERS_TOKEN");
-  const response = await fetch(`${supabaseUrl}/functions/v1/simsaj-orders`, {
+  const response = await fetch(`${supabaseUrl}/functions/v1/simsaj-orders${query}`, {
     method,
     headers: { authorization: `Bearer ${token}`, ...(body === undefined ? {} : { "content-type": "application/json" }) },
     body: body === undefined ? undefined : JSON.stringify(body),

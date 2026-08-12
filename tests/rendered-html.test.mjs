@@ -151,3 +151,12 @@ test("checkout offers personal pickup, Packeta point selection and GLS", async (
   assert.match(gls, /GLS_CLIENT_NUMBER/);
   assert.doesNotMatch(gls, /hravosdetmi/i);
 });
+
+test("test orders prepare unsent customer and admin email previews", async () => {
+  const migration = await readFile(new URL("../supabase/migrations/20260811202722_add_test_order_email_previews.sql", import.meta.url), "utf8");
+  const detail = await readFile(new URL("../app/admin/objednavky/[id]/page.tsx", import.meta.url), "utf8");
+  assert.match(migration, /audience in \('customer', 'admin'\)/);
+  assert.match(migration, /status text not null default 'draft'/);
+  assert.match(migration, /if not new\.is_test then return new/);
+  assert.match(detail, /Skúšobný režim – tieto správy sa neodosielajú/);
+});

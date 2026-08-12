@@ -263,6 +263,62 @@ export type Database = {
           },
         ]
       }
+      order_email_notifications: {
+        Row: {
+          attempt_count: number
+          audience: string
+          body_text: string
+          created_at: string
+          id: string
+          last_error: string | null
+          order_id: string
+          provider_message_id: string | null
+          recipient_email: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          audience: string
+          body_text: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          order_id: string
+          provider_message_id?: string | null
+          recipient_email?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          audience?: string
+          body_text?: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          order_id?: string
+          provider_message_id?: string | null
+          recipient_email?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_email_notifications_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           billing_address: Json

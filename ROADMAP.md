@@ -184,6 +184,7 @@ Admin rozhranie má postupne obsahovať:
 - Zobraziť detail objednávky, riadené zmeny stavov a auditnú históriu administrátorských zásahov. (hotové pre skúšobné objednávky)
 - Evidovať dopravcu a sledovacie číslo v administrácii vrátane auditnej histórie. (hotové pre skúšobné objednávky)
 - Umožniť zákazníkovi zvoliť osobný odber, Packetu s výberom výdajného miesta alebo kuriéra GLS; integračné kľúče sú oddelené pre SIMSAJ. (pripravené, čaká na SIMSAJ kľúče)
+- Pripraviť zákaznícke a administrátorské e-mailové notifikácie ako bezpečné neodosielané náhľady pre skúšobné objednávky. (hotové)
 - Produkčné platby, doprava, e-maily a správa objednávok.
 - Administrácia objednávok a integrácia SuperFaktúry adaptovaná z projektu `noycegroup/hravosdetmi-remake`.
 - Heureka konverzia a Overené zákazníkmi prepojené so stavom objednávky a platby.

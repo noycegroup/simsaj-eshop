@@ -11,6 +11,18 @@ export const metadata: Metadata = { title: "Administrácia | SIMSAJ", robots: { 
 export const dynamic = "force-dynamic";
 
 type AdminPageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+type AdminProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  brand: string | null;
+  status: string;
+  updated_at: string;
+  model: string | null;
+  image_url: string | null;
+  customer_price: number | null;
+  purchase_price: number | null;
+};
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] ?? "" : value ?? "";
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
@@ -22,7 +34,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const publicResult = await supabase.from("products")
     .select("id,name,slug,brand,status,updated_at,product_images(storage_path,sort_order),product_variants(price)")
     .order("updated_at", { ascending: false });
-  let products = (publicResult.data ?? []).map((product) => ({
+  let products: AdminProduct[] = (publicResult.data ?? []).map((product) => ({
     id: product.id, name: product.name, slug: product.slug, brand: product.brand, status: product.status, updated_at: product.updated_at,
     model: null as string | null,
     image_url: [...product.product_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path ?? null,

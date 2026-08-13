@@ -14,7 +14,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 async function getProduct(slug: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("products").select("id,name,slug,short_description,description,brand,product_variants(price,size,stock_quantity,is_active,sku),product_images(storage_path,sort_order)").eq("slug", slug).eq("status", "active").maybeSingle();
+  const { data } = await supabase.from("products").select("id,name,slug,short_description,description,seo_description,brand,product_variants(price,size,stock_quantity,is_active,sku),product_images(storage_path,sort_order)").eq("slug", slug).eq("status", "active").maybeSingle();
   return data;
 }
 

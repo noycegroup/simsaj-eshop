@@ -16,6 +16,7 @@ export default function SetPasswordPage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [recoveryToken, setRecoveryToken] = useState("");
   const [linkInvalid, setLinkInvalid] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState("office@noyce.sk");
   const [sendingRecovery, setSendingRecovery] = useState(false);
@@ -28,13 +29,18 @@ export default function SetPasswordPage() {
       const authError = fragment.get("error");
       const authErrorCode = fragment.get("error_code");
       const accessToken = fragment.get("access_token");
-      const refreshToken = fragment.get("refresh_token");
       try {
-        const supabase = createClient();
-        if (accessToken && refreshToken) {
-          const { error: sessionError } = await withTimeout(supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }));
-          if (sessionError) throw sessionError;
+        if (accessToken) {
+          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+          if (active) {
+            setRecoveryToken(accessToken);
+            setError("");
+            setLinkInvalid(false);
+            setSessionReady(true);
+          }
+          return;
         }
+        const supabase = createClient();
         const { data } = await withTimeout(supabase.auth.getSession());
         if (!data.session) throw new Error("missing-session");
         window.history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -67,8 +73,18 @@ export default function SetPasswordPage() {
     if (!sessionReady) return setError("Pozývací odkaz ešte nie je pripravený alebo už vypršal.");
     setSaving(true);
     try {
-      const { error: updateError } = await withTimeout(createClient().auth.updateUser({ password }), 12000);
-      if (updateError) throw updateError;
+      if (recoveryToken) {
+        const response = await withTimeout(fetch("/api/auth/password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken: recoveryToken, password }),
+        }), 15000);
+        const result = await response.json() as { error?: string };
+        if (!response.ok) throw new Error(result.error ?? "password-update-failed");
+      } else {
+        const { error: updateError } = await withTimeout(createClient().auth.updateUser({ password }), 12000);
+        if (updateError) throw updateError;
+      }
       window.location.assign("/admin");
     } catch {
       setError("Heslo sa nepodarilo uložiť. Skúste novú pozvánku alebo to zopakujte o chvíľu.");

@@ -21,3 +21,12 @@ Databázový projekt, prístupový model a pravidlá bezpečného prepojenia sú
 ## Najbližší krok
 
 Založiť a prepojiť projekty vo Verceli a Supabase, inicializovať aplikáciu v Next.js 16 a pripraviť vývojové prostredie podľa prvého míľnika roadmapy.
+
+## Prostredia a vetvy
+
+| Prostredie | Git vetva | Adresa | Nasadenie |
+| --- | --- | --- | --- |
+| Vývoj (DEV) | `dev` | `https://dev.simsaj.sk` | automaticky po pushi do `dev` |
+| Akceptácia (ACC) | `acc` | `https://acc.simsaj.sk` | automaticky po zlúčení PR `dev` → `acc` |
+
+Každý push do vetvy `dev` automaticky vytvorí alebo aktualizuje pull request do vetvy `acc`. Po jeho kontrole a zlúčení Vercel nasadí rovnakú verziu na akceptačné prostredie.

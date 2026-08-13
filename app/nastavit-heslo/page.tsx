@@ -5,6 +5,13 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/client";
 
+function withTimeout<T>(operation: PromiseLike<T>, milliseconds = 8000) {
+  return Promise.race<T>([
+    Promise.resolve(operation),
+    new Promise<T>((_, reject) => window.setTimeout(() => reject(new Error("timeout")), milliseconds)),
+  ]);
+}
+
 export default function SetPasswordPage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -17,7 +24,6 @@ export default function SetPasswordPage() {
   useEffect(() => {
     let active = true;
     async function acceptInvitation() {
-      const supabase = createClient();
       const fragment = new URLSearchParams(window.location.hash.slice(1));
       const authError = fragment.get("error");
       const authErrorCode = fragment.get("error_code");
@@ -28,12 +34,18 @@ export default function SetPasswordPage() {
           window.history.replaceState(null, "", window.location.pathname);
           throw new Error(authErrorCode || authError || "invalid-auth-link");
         }
-        if (accessToken && refreshToken) {
-          const { error: sessionError } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-          if (sessionError) throw sessionError;
-          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        if (!accessToken || !refreshToken) {
+          if (active) {
+            setLinkInvalid(true);
+            setError("Na nastavenie hesla potrebujete platný odkaz z e-mailu. Vyžiadajte si nový odkaz.");
+          }
+          return;
         }
-        const { data } = await supabase.auth.getSession();
+        const supabase = createClient();
+        const { error: sessionError } = await withTimeout(supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }));
+        if (sessionError) throw sessionError;
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        const { data } = await withTimeout(supabase.auth.getSession());
         if (!data.session) throw new Error("missing-session");
         if (active) setSessionReady(true);
       } catch {
@@ -58,9 +70,7 @@ export default function SetPasswordPage() {
     if (!sessionReady) return setError("Pozývací odkaz ešte nie je pripravený alebo už vypršal.");
     setSaving(true);
     try {
-      const update = createClient().auth.updateUser({ password });
-      const timeout = new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("timeout")), 12000));
-      const { error: updateError } = await Promise.race([update, timeout]);
+      const { error: updateError } = await withTimeout(createClient().auth.updateUser({ password }), 12000);
       if (updateError) throw updateError;
       window.location.assign("/admin");
     } catch {
@@ -75,9 +85,9 @@ export default function SetPasswordPage() {
     setSendingRecovery(true);
     setRecoverySent(false);
     try {
-      const { error: recoveryError } = await createClient().auth.resetPasswordForEmail(recoveryEmail.trim(), {
+      const { error: recoveryError } = await withTimeout(createClient().auth.resetPasswordForEmail(recoveryEmail.trim(), {
         redirectTo: `${window.location.origin}/nastavit-heslo`,
-      });
+      }), 12000);
       if (recoveryError) throw recoveryError;
       setRecoverySent(true);
     } catch {

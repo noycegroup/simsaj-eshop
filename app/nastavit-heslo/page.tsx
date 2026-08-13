@@ -90,8 +90,15 @@ export default function SetPasswordPage() {
       }), 12000);
       if (recoveryError) throw recoveryError;
       setRecoverySent(true);
-    } catch {
-      setError("Nový odkaz sa nepodarilo odoslať. Počkajte chvíľu a skúste to znova.");
+    } catch (recoveryError) {
+      const authError = recoveryError as { code?: string; message?: string; status?: number };
+      if (authError.status === 429 || authError.code === "over_email_send_rate_limit") {
+        setError("Obnovovací e-mail už bol nedávno odoslaný. Počkajte aspoň 60 sekúnd a použite iba najnovší e-mail.");
+      } else if (authError.message === "timeout") {
+        setError("Odoslanie trvá dlhšie než zvyčajne. Skontrolujte doručenú poštu pred ďalším pokusom.");
+      } else {
+        setError("Nový odkaz sa nepodarilo odoslať. Počkajte chvíľu a skúste to znova.");
+      }
     } finally {
       setSendingRecovery(false);
     }

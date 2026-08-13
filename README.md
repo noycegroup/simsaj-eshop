@@ -27,6 +27,6 @@ Založiť a prepojiť projekty vo Verceli a Supabase, inicializovať aplikáciu 
 | Prostredie | Git vetva | Adresa | Nasadenie |
 | --- | --- | --- | --- |
 | Vývoj (DEV) | `dev` | `https://dev.simsaj.sk` | automaticky po pushi do `dev` |
-| Akceptácia (ACC) | `acc` | `https://acc.simsaj.sk` | automaticky po zlúčení PR `dev` → `acc` |
+| Akceptácia (ACC) | `acc` | `https://acc.simsaj.sk` | automaticky po úspešnom pushi do `dev` |
 
-Každý push do vetvy `dev` automaticky vytvorí alebo aktualizuje pull request do vetvy `acc`. Po jeho kontrole a zlúčení Vercel nasadí rovnakú verziu na akceptačné prostredie.
+Každý push do vetvy `dev` automaticky aktualizuje vetvu `acc` na rovnakú verziu. Vercel potom nasadí rovnaký commit na vývojové aj akceptačné prostredie.

@@ -71,6 +71,15 @@ body:has(.admin-page) > footer { display: none; }
   .site-header { grid-template-columns: 190px 1fr auto; gap: 18px; }.brand img { width: 180px; }.quick-actions { gap: 16px; }.quick-actions span { display: none; }
   .category-grid { grid-template-columns: repeat(4, 1fr); }.care-section { grid-template-columns: 1fr 1fr; }.booking-card { grid-column: 1 / -1; min-height: 230px; }.services-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }.services-grid article:nth-child(3) { border-left: 0; }.brand-grid { grid-template-columns: repeat(4, 1fr); }.footer-grid { grid-template-columns: 1.2fr repeat(2, 1fr); }
 }
+
+.login-page { min-height: 62vh; display: grid; place-items: center; padding: 64px 24px; background: #f4f6f5; }
+.login-card { width: min(100%, 520px); padding: clamp(28px, 5vw, 52px); border: 1px solid #d8dfdc; border-radius: 20px; background: #fff; box-shadow: 0 20px 55px rgba(13, 54, 42, .08); }
+.login-card h1 { margin: 8px 0 10px; font-size: clamp(36px, 6vw, 58px); }
+.login-card > p:not(.eyebrow):not(.checkout-error) { color: #59635f; margin-bottom: 28px; }
+.login-card form { display: grid; gap: 18px; }
+.login-card label { display: grid; gap: 8px; font-weight: 700; }
+.login-card input { min-height: 50px; padding: 0 14px; border: 1px solid #cbd4d0; border-radius: 8px; font: inherit; }
+.login-card .button { margin-top: 4px; }
 @media (max-width: 760px) {
   .topbar { min-height: 34px; justify-content: center; text-align: center; }.topbar span:not(:first-child) { display: none; }
   .site-header { min-height: 92px; padding: 10px 18px; grid-template-columns: 145px 1fr; }.brand img { width: 140px; height: 66px; }.search { grid-column: 1 / -1; grid-row: 2; height: 44px; }.quick-actions { justify-self: end; }.quick-actions a:first-child { display: none; }.quick-actions b { font-size: 25px; }.category-nav { padding: 0 18px; justify-content: start; }

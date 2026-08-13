@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.112.2";
 
-const expectedTokenHash = "dde91bf07269fe25b3a117928e69992207178ad09eca91d8a2078720b513eecd";
+const expectedTokenHash = "bdb8eef24fb73e7daa665e7d3cca09c6b10bb3dd6d521bc7909aa7f522dd1515";
 
 async function sha256(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));

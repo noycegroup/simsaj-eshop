@@ -30,28 +30,25 @@ export default function SetPasswordPage() {
       const accessToken = fragment.get("access_token");
       const refreshToken = fragment.get("refresh_token");
       try {
-        if (authError || authErrorCode) {
-          window.history.replaceState(null, "", window.location.pathname);
-          throw new Error(authErrorCode || authError || "invalid-auth-link");
-        }
-        if (!accessToken || !refreshToken) {
-          if (active) {
-            setLinkInvalid(true);
-            setError("Na nastavenie hesla potrebujete platný odkaz z e-mailu. Vyžiadajte si nový odkaz.");
-          }
-          return;
-        }
         const supabase = createClient();
-        const { error: sessionError } = await withTimeout(supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }));
-        if (sessionError) throw sessionError;
-        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        if (accessToken && refreshToken) {
+          const { error: sessionError } = await withTimeout(supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }));
+          if (sessionError) throw sessionError;
+        }
         const { data } = await withTimeout(supabase.auth.getSession());
         if (!data.session) throw new Error("missing-session");
-        if (active) setSessionReady(true);
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        if (active) {
+          setError("");
+          setLinkInvalid(false);
+          setSessionReady(true);
+        }
       } catch {
         if (active) {
           setLinkInvalid(true);
-          setError("Odkaz na nastavenie hesla je neplatný, už bol použitý alebo vypršal. Vyžiadajte si nový odkaz.");
+          setError(authError || authErrorCode
+            ? "Odkaz na nastavenie hesla je neplatný, už bol použitý alebo vypršal. Vyžiadajte si nový odkaz."
+            : "Na nastavenie hesla potrebujete platný odkaz z e-mailu. Vyžiadajte si nový odkaz.");
         }
       }
     }

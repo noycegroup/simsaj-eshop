@@ -85,15 +85,18 @@ export default function SetPasswordPage() {
     setSendingRecovery(true);
     setRecoverySent(false);
     try {
-      const { error: recoveryError } = await withTimeout(createClient().auth.resetPasswordForEmail(recoveryEmail.trim(), {
-        redirectTo: `${window.location.origin}/nastavit-heslo`,
-      }), 12000);
-      if (recoveryError) throw recoveryError;
+      const response = await withTimeout(fetch("/api/auth/recovery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: recoveryEmail.trim() }),
+      }), 18000);
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw Object.assign(new Error(result.error ?? "recovery-failed"), { status: response.status });
       setRecoverySent(true);
     } catch (recoveryError) {
       const authError = recoveryError as { code?: string; message?: string; status?: number };
       if (authError.status === 429 || authError.code === "over_email_send_rate_limit") {
-        setError("Obnovovací e-mail už bol nedávno odoslaný. Počkajte aspoň 60 sekúnd a použite iba najnovší e-mail.");
+        setError(authError.message ?? "Obnovovací e-mail už bol nedávno odoslaný. Počkajte aspoň 60 sekúnd a použite iba najnovší e-mail.");
       } else if (authError.message === "timeout") {
         setError("Odoslanie trvá dlhšie než zvyčajne. Skontrolujte doručenú poštu pred ďalším pokusom.");
       } else {

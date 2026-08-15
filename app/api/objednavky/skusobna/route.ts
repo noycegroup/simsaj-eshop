@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
   const supabase = await createClient();
   const { data: products, error: productsError } = await supabase.from("products")
-    .select("id,name,slug,status,product_variants(id,name,size,sku,price,vat_rate,is_active)")
+    .select("id,name,slug,status,product_variants(id,name,size,width_code,sku,price,vat_rate,stock_quantity,is_active)")
     .in("slug", [...new Set(requested.map((item) => item.slug))]);
   if (productsError) return NextResponse.json({ error: "Produkty sa nepodarilo overiť." }, { status: 503 });
 
@@ -87,9 +87,13 @@ export async function POST(request: NextRequest) {
     const normalizedItems = requested.map((item) => {
       const product = products?.find((candidate) => candidate.slug === item.slug && candidate.status === "active");
       if (!product) throw new Error("Produkt už nie je dostupný.");
-      const variants = product.product_variants.filter((variant) => variant.is_active);
-      const variant = variants.find((candidate) => candidate.size === item.size) ?? variants[0];
-      if (!variant) throw new Error("Variant produktu už nie je dostupný.");
+      const variant = product.product_variants.find((candidate) =>
+        candidate.size === item.size &&
+        (candidate.width_code ?? "") === item.width &&
+        candidate.is_active &&
+        candidate.stock_quantity >= item.quantity
+      );
+      if (!variant) throw new Error("Vybraný variant produktu už nie je dostupný v požadovanom množstve.");
       const working = diawinWorkingCatalog[product.name];
       const unitPrice = working?.price ?? Number(variant.price);
       if (!Number.isFinite(unitPrice) || unitPrice < 0) throw new Error("Cena produktu nie je platná.");

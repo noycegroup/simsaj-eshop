@@ -140,6 +140,22 @@ test("test checkout persists orders without activating payment integrations", as
   assert.doesNotMatch(route, /comgate|superfaktura|heureka/i);
 });
 
+test("product detail blocks unavailable size and width combinations", async () => {
+  const configurator = await readFile(new URL("../components/product-configurator.tsx", import.meta.url), "utf8");
+  const detail = await readFile(new URL("../app/produkty/[slug]/page.tsx", import.meta.url), "utf8");
+  const route = await readFile(new URL("../app/api/objednavky/skusobna/route.ts", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../supabase/migrations/20260815062112_add_variant_width_and_diawin_stock.sql", import.meta.url), "utf8");
+
+  assert.match(detail, /width_code,width_label,stock_quantity,is_active/);
+  assert.match(configurator, /disabled=\{!available\}/);
+  assert.match(configurator, /Variant nie je dostupný/);
+  assert.match(configurator, /variant-unavailable/);
+  assert.match(route, /candidate\.width_code/);
+  assert.match(route, /candidate\.stock_quantity >= item\.quantity/);
+  assert.match(migration, /add column if not exists width_code/);
+  assert.match(migration, /private\.supplier_variants/);
+});
+
 test("checkout offers personal pickup, Packeta point selection and GLS", async () => {
   const checkout = await readFile(new URL("../app/pokladna/page.tsx", import.meta.url), "utf8");
   const route = await readFile(new URL("../app/api/objednavky/skusobna/route.ts", import.meta.url), "utf8");

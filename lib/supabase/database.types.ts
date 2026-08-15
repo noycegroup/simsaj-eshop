@@ -533,6 +533,8 @@ export type Database = {
           stock_quantity: number
           updated_at: string
           vat_rate: number
+          width_code: string | null
+          width_label: string | null
         }
         Insert: {
           barcode?: string | null
@@ -549,6 +551,8 @@ export type Database = {
           stock_quantity?: number
           updated_at?: string
           vat_rate?: number
+          width_code?: string | null
+          width_label?: string | null
         }
         Update: {
           barcode?: string | null
@@ -565,6 +569,8 @@ export type Database = {
           stock_quantity?: number
           updated_at?: string
           vat_rate?: number
+          width_code?: string | null
+          width_label?: string | null
         }
         Relationships: [
           {

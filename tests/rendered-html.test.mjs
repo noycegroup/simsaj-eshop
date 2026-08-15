@@ -140,6 +140,15 @@ test("test checkout persists orders without activating payment integrations", as
   assert.doesNotMatch(route, /comgate|superfaktura|heureka/i);
 });
 
+test("checkout keeps the order confirmation visible after clearing the cart", async () => {
+  const checkout = await readFile(new URL("../app/pokladna/page.tsx", import.meta.url), "utf8");
+  const successState = checkout.indexOf("if (orderNumber)");
+  const emptyCartState = checkout.indexOf("else if (!items.length)");
+
+  assert.ok(successState >= 0, "checkout must render its successful order state");
+  assert.ok(emptyCartState > successState, "successful order state must take priority over the cleared cart");
+});
+
 test("product detail blocks unavailable size and width combinations", async () => {
   const configurator = await readFile(new URL("../components/product-configurator.tsx", import.meta.url), "utf8");
   const detail = await readFile(new URL("../app/produkty/[slug]/page.tsx", import.meta.url), "utf8");

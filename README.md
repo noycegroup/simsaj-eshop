@@ -29,4 +29,4 @@ Založiť a prepojiť projekty vo Verceli a Supabase, inicializovať aplikáciu 
 | Vývoj (DEV) | `dev` | `https://dev.simsaj.sk` | automaticky po pushi do `dev` |
 | Akceptácia (ACC) | `acc` | `https://acc.simsaj.sk` | manuálne po otestovaní DEV |
 
-Každý push do vetvy `dev` automaticky nasadí novú verziu iba na vývojové prostredie. Po úspešnom otestovaní sa v GitHub Actions manuálne spustí workflow **Nasadiť DEV na ACC**, ktorý aktualizuje vetvu `acc` na otestovaný stav vetvy `dev`. Vercel následne nasadí túto verziu na akceptačné prostredie.
+Každý push do vetvy `dev` automaticky nasadí novú verziu iba na vývojové prostredie. Po úspešnom otestovaní sa vytvorí pull request z vetvy `dev` do vetvy `acc`. Až jeho vedomé schválenie a zlúčenie aktualizuje `acc`; Vercel následne automaticky nasadí schválenú verziu na akceptačné prostredie.

@@ -218,6 +218,31 @@ async function importDiawin(databaseUrl, feed) {
             source_updated_at = excluded.source_updated_at,
             last_seen_at = now()
         `;
+        await transaction`
+          insert into public.product_variants
+            (product_id, sku, name, price, barcode, size, width_code, width_label,
+             stock_quantity, is_active, vat_rate, updated_at)
+          select product.canonical_product_id, ${variant.sku},
+                 ${`${variant.externalModelId} · veľkosť ${variant.size} · šírka ${variant.widthCode}`},
+                 coalesce(existing.price, 0), ${variant.gtin}, ${variant.size},
+                 ${variant.widthCode}, ${variant.widthLabel}, ${variant.quantity},
+                 ${variant.availability === "in_stock" && variant.quantity > 0}, 23, now()
+          from private.supplier_products product
+          left join public.product_variants existing on existing.sku = ${variant.sku}
+          where product.supplier_id = ${supplierId}
+            and product.external_model_id = ${variant.externalModelId}
+            and product.canonical_product_id is not null
+          on conflict (sku) do update set
+            product_id = excluded.product_id,
+            name = excluded.name,
+            barcode = excluded.barcode,
+            size = excluded.size,
+            width_code = excluded.width_code,
+            width_label = excluded.width_label,
+            stock_quantity = excluded.stock_quantity,
+            is_active = excluded.is_active,
+            updated_at = now()
+        `;
       }
 
       await transaction`

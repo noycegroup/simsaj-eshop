@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { diawinWorkingCatalog } from "@/lib/diawin-working-catalog";
 import type { Database } from "@/lib/supabase/database.types";
+import { SiteHeader } from "@/components/site-header";
+import { AdminToolbar } from "@/components/admin-toolbar";
 
 export const metadata: Metadata = { title: "Administrácia | SIMSAJ", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -60,11 +62,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   });
   const readyCount = products?.length ?? 0;
 
-  return <main className="admin-page">
-    <header className="admin-header">
-      <div><Link className="admin-brand" href="/">SIMSAJ</Link><span>Administrácia katalógu</span></div>
-      <div className="admin-user"><span>{user.displayName}</span><a href={chatGPTSignOutPath("/")}>Odhlásiť</a></div>
-    </header>
+  return <><SiteHeader suggestions={[]} /><main className="admin-page">
+    <AdminToolbar label="Administrácia katalógu" userName={user.displayName} signOutHref={chatGPTSignOutPath("/")} />
     <section className="admin-shell">
       <div className="admin-title"><div><p className="eyebrow">MÍĽNIK M3 · KATALÓG</p><h1>Produkty a feedy</h1><p>Kontrola produktov pripravených z partnerských XML zdrojov.</p></div><div className="admin-title-actions"><Link className="button secondary" href="/admin/objednavky">Objednávky</Link><Link className="button primary" href="/produkty">Otvoriť katalóg</Link></div></div>
       <div className="admin-stats">
@@ -90,5 +89,5 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </tr>)}</tbody></table></div> : <p className="admin-message">História importov bude dostupná po pripojení serverového prístupu k databáze.</p>}
       </section>
     </section>
-  </main>;
+  </main></>;
 }

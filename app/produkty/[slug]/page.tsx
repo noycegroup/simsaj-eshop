@@ -14,7 +14,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 async function getProduct(slug: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("products").select("id,name,slug,short_description,description,seo_description,brand,product_variants(price,size,stock_quantity,is_active,sku),product_images(storage_path,sort_order)").eq("slug", slug).eq("status", "active").maybeSingle();
+  const { data } = await supabase.from("products").select("id,name,slug,short_description,description,seo_description,brand,product_variants(price,size,width_code,width_label,stock_quantity,is_active,sku),product_images(storage_path,sort_order)").eq("slug", slug).eq("status", "active").maybeSingle();
   return data;
 }
 
@@ -46,8 +46,11 @@ export default async function ProductDetailPage({ params }: Props) {
   const activeVariants = product.product_variants.filter((variant) => variant.is_active && variant.stock_quantity > 0);
   const image = workingProduct?.image ?? [...product.product_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path;
   const price = workingProduct?.price ?? Math.min(...activeVariants.map((variant) => variant.price));
-  const sizes = workingProduct?.sizes ?? [...new Set(activeVariants.map((variant) => variant.size).filter((value): value is string => Boolean(value)))];
-  const widths = workingProduct?.widths ?? [];
+  const sizes = workingProduct?.sizes ?? [...new Set(product.product_variants.map((variant) => variant.size).filter((value): value is string => Boolean(value)))];
+  const widths = workingProduct?.widths ?? [...new Map(product.product_variants.filter((variant) => variant.width_code).map((variant) => [variant.width_code, { code: variant.width_code!, label: variant.width_label ?? variant.width_code! }])).values()];
+  const variants = product.product_variants
+    .filter((variant): variant is typeof variant & { size: string } => Boolean(variant.size))
+    .map((variant) => ({ size: variant.size, width: variant.width_code ?? "", quantity: variant.stock_quantity, available: variant.is_active && variant.stock_quantity > 0 }));
   const model = workingProduct?.model ?? "SVORTO";
   if (!image || !Number.isFinite(price) || !sizes.length) notFound();
 
@@ -93,7 +96,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <p className="detail-price">{workingProduct ? formatWorkingPrice(workingProduct) : new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR" }).format(price)} <small>{workingProduct ? "orientačná cena" : "cena s DPH"}</small></p>
           <p className="detail-lead">{product.short_description}</p>
           <div className="detail-notice"><strong>Skúšobný nákupný tok</strong><span>{workingProduct ? "Cenu a dostupnosť ešte potvrdíme s partnerom." : "Cena, veľkosti a dostupnosť boli načítané z B2B feedu SVORTO."} Objednávka zatiaľ nebude odoslaná ani zaplatená.</span></div>
-          <ProductConfigurator product={{ slug: product.slug, name: product.name, model, image, price, sizes, widths }} />
+          <ProductConfigurator product={{ slug: product.slug, name: product.name, model, image, price, sizes, widths, variants }} />
           <ul className="detail-benefits"><li>Varianty a dostupnosť načítané z partnerského feedu</li><li>Cena je uvedená vrátane DPH</li><li>Pred ostrým spustením prebehne obchodná kontrola sortimentu</li></ul>
         </section>
       </div>

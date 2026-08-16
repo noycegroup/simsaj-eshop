@@ -52,6 +52,21 @@ test("admin catalog is server protected and excluded from search", async () => {
   assert.match(page, /História importov partnerov/);
 });
 
+test("all administration pages share the customer-facing site header", async () => {
+  const pages = await Promise.all([
+    readFile(new URL("../app/admin/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/objednavky/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/objednavky/[id]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/produkty/[id]/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const page of pages) {
+    assert.match(page, /<SiteHeader suggestions=\{\[\]\} \/>/);
+    assert.match(page, /<AdminToolbar /);
+    assert.doesNotMatch(page, /<header className="admin-header">/);
+  }
+});
+
 test("SVORTO import keeps B2B data private and exposes customer catalog data", async () => {
   const importer = await readFile(new URL("../scripts/import-svorto-feed.mjs", import.meta.url), "utf8");
   assert.match(importer, /parseSvortoFeed/);
@@ -138,6 +153,31 @@ test("test checkout persists orders without activating payment integrations", as
   assert.match(migration, /security invoker/);
   assert.match(migration, /revoke all on function public\.create_test_order.*from public, anon, authenticated/);
   assert.doesNotMatch(route, /comgate|superfaktura|heureka/i);
+});
+
+test("checkout keeps the order confirmation visible after clearing the cart", async () => {
+  const checkout = await readFile(new URL("../app/pokladna/page.tsx", import.meta.url), "utf8");
+  const successState = checkout.indexOf("if (orderNumber)");
+  const emptyCartState = checkout.indexOf("else if (!items.length)");
+
+  assert.ok(successState >= 0, "checkout must render its successful order state");
+  assert.ok(emptyCartState > successState, "successful order state must take priority over the cleared cart");
+});
+
+test("product detail blocks unavailable size and width combinations", async () => {
+  const configurator = await readFile(new URL("../components/product-configurator.tsx", import.meta.url), "utf8");
+  const detail = await readFile(new URL("../app/produkty/[slug]/page.tsx", import.meta.url), "utf8");
+  const route = await readFile(new URL("../app/api/objednavky/skusobna/route.ts", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../supabase/migrations/20260815062112_add_variant_width_and_diawin_stock.sql", import.meta.url), "utf8");
+
+  assert.match(detail, /width_code,width_label,stock_quantity,is_active/);
+  assert.match(configurator, /disabled=\{!available\}/);
+  assert.match(configurator, /Variant nie je dostupný/);
+  assert.match(configurator, /variant-unavailable/);
+  assert.match(route, /candidate\.width_code/);
+  assert.match(route, /candidate\.stock_quantity >= item\.quantity/);
+  assert.match(migration, /add column if not exists width_code/);
+  assert.match(migration, /private\.supplier_variants/);
 });
 
 test("checkout offers personal pickup, Packeta point selection and GLS", async () => {

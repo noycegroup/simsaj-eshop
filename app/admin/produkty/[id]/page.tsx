@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireChatGPTUser } from "@/app/chatgpt-auth";
+import { requireChatGPTUser, chatGPTSignOutPath } from "@/app/chatgpt-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateProduct } from "../actions";
+import { SiteHeader } from "@/components/site-header";
+import { AdminToolbar } from "@/components/admin-toolbar";
 
 export const metadata: Metadata = { title: "Úprava produktu | SIMSAJ", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -18,7 +20,7 @@ const first = (value: string | string[] | undefined) => Array.isArray(value) ? v
 
 export default async function AdminProductPage({ params, searchParams }: Props) {
   const { id } = await params;
-  await requireChatGPTUser(`/admin/produkty/${id}`);
+  const user = await requireChatGPTUser(`/admin/produkty/${id}`);
   const query = await searchParams;
   const admin = createAdminClient();
   const [{ data: product }, { data: override }] = await Promise.all([
@@ -31,8 +33,8 @@ export default async function AdminProductPage({ params, searchParams }: Props) 
   const activeVariants = product.product_variants.filter((variant) => variant.is_active);
   const price = Math.min(...activeVariants.map((variant) => variant.price));
 
-  return <main className="admin-page">
-    <header className="admin-header"><div><Link className="admin-brand" href="/">SIMSAJ</Link><span>Úprava produktu</span></div><Link href="/admin">← Späť na produkty</Link></header>
+  return <><SiteHeader suggestions={[]} /><main className="admin-page">
+    <AdminToolbar label="Úprava produktu" userName={user.displayName} signOutHref={chatGPTSignOutPath("/")} backHref="/admin" backLabel="Späť na produkty" />
     <section className="admin-shell admin-edit-shell">
       <div className="admin-edit-heading"><div><p className="eyebrow">{product.brand} · REDAKCIA</p><h1>{product.name}</h1><p>Ručne uložené texty a stav zostanú chránené pred prepísaním XML feedom.</p></div><Link href={`/produkty/${product.slug}`}>Zobraziť v katalógu →</Link></div>
       {first(query.saved) === "1" ? <p className="admin-alert success" role="status">Produkt bol uložený a auditná stopa zaznamenaná.</p> : null}
@@ -49,5 +51,5 @@ export default async function AdminProductPage({ params, searchParams }: Props) 
         </form>
       </div>
     </section>
-  </main>;
+  </main></>;
 }

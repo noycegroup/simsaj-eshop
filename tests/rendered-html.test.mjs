@@ -52,6 +52,21 @@ test("admin catalog is server protected and excluded from search", async () => {
   assert.match(page, /História importov partnerov/);
 });
 
+test("all administration pages share the customer-facing site header", async () => {
+  const pages = await Promise.all([
+    readFile(new URL("../app/admin/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/objednavky/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/objednavky/[id]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/produkty/[id]/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const page of pages) {
+    assert.match(page, /<SiteHeader suggestions=\{\[\]\} \/>/);
+    assert.match(page, /<AdminToolbar /);
+    assert.doesNotMatch(page, /<header className="admin-header">/);
+  }
+});
+
 test("SVORTO import keeps B2B data private and exposes customer catalog data", async () => {
   const importer = await readFile(new URL("../scripts/import-svorto-feed.mjs", import.meta.url), "utf8");
   assert.match(importer, /parseSvortoFeed/);

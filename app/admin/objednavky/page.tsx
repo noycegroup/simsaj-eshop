@@ -3,6 +3,8 @@ import Link from "next/link";
 import { requireChatGPTUser, chatGPTSignOutPath } from "@/app/chatgpt-auth";
 import { callOrdersService } from "@/lib/server/orders-service";
 import type { Json } from "@/lib/supabase/database.types";
+import { SiteHeader } from "@/components/site-header";
+import { AdminToolbar } from "@/components/admin-toolbar";
 
 export const metadata: Metadata = { title: "Objednávky | SIMSAJ administrácia", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -23,11 +25,8 @@ export default async function AdminOrdersPage() {
     console.error("[admin/orders] loading failed", error instanceof Error ? error.message : String(error));
   }
 
-  return <main className="admin-page">
-    <header className="admin-header">
-      <div><Link className="admin-brand" href="/">SIMSAJ</Link><span>Administrácia objednávok</span></div>
-      <div className="admin-user"><span>{user.displayName}</span><a href={chatGPTSignOutPath("/")}>Odhlásiť</a></div>
-    </header>
+  return <><SiteHeader suggestions={[]} /><main className="admin-page">
+    <AdminToolbar label="Administrácia objednávok" userName={user.displayName} signOutHref={chatGPTSignOutPath("/")} />
     <section className="admin-shell">
       <div className="admin-title"><div><p className="eyebrow">MÍĽNIK M4 · OBJEDNÁVKY</p><h1>Objednávky</h1><p>Bezpečný prehľad skúšobných objednávok bez spustenia platby a fakturácie.</p></div><Link className="button secondary" href="/admin">Produkty a feedy</Link></div>
       <section className="admin-panel">
@@ -38,5 +37,5 @@ export default async function AdminOrdersPage() {
         })}</tbody></table></div> : <p className="admin-message">Zatiaľ nebola uložená žiadna objednávka. Skúšobnú vytvoríte cez košík a pokladňu.</p>}
       </section>
     </section>
-  </main>;
+  </main></>;
 }

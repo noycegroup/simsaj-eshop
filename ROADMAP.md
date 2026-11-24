@@ -9,7 +9,7 @@ Vybudovať dôveryhodný, rýchly a jednoducho spravovateľný e-shop pre SIMSAJ
 - **M0 – dokončený:** repozitár, roadmapa a základná dokumentácia.
 - **M1 – dokončený:** aplikácia, databáza a hosting sú online; technické SEO minimum je zapracované a administrácia je chránená serverovým prihlásením ChatGPT a owner-only pravidlami hostingu.
 - **M2 – funkčný prototyp:** katalóg, detail produktu, výber veľkosti a šírky, lokálny skúšobný košík a nezáväzná pokladňa.
-- **M3 – takmer dokončený:** partneri Diawin a SVORTO sú importovaní; katalóg má vyhľadávanie, filtre a radenie. Administrácia zobrazuje históriu importov a umožňuje bezpečne upraviť, schváliť alebo skryť produkt. Ručné redakčné údaje sú chránené pred XML importom a zmeny majú auditnú stopu. Zostáva aktivácia pravidelnej synchronizácie.
+- **M3 – takmer dokončený:** partneri Diawin a SVORTO sú importovaní; katalóg má vyhľadávanie, filtre a radenie. Administrácia zobrazuje históriu importov a umožňuje bezpečne upraviť, schváliť alebo skryť produkt. Ručné redakčné údaje sú chránené pred XML importom a zmeny majú auditnú stopu. Zostáva doplnenie a potvrdenie dodávateľských podkladov a následná aktivácia pravidelnej synchronizácie. Technická kontrola 24. 11. 2026 potvrdila dostupnosť všetkých piatich feedov; otvorené body sú uvedené vo fáze 3.
 
 Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady. Produkčný nákup zostáva vypnutý do ich potvrdenia.
 
@@ -48,6 +48,48 @@ Pracovné ceny a fotografie sa nesmú považovať za finálne obchodné podklady
 - Zachovať manuálne spúšťanie synchronizácií a upozornenia na neúspešný import; pravidelný plán je na rozhodnutie majiteľa dočasne vypnutý.
 
 **Výstup:** spoľahlivo synchronizovaný a spravovateľný produktový katalóg.
+
+### XML dodávatelia – stav k 24. 11. 2026
+
+Všetkých päť adries od dodávateľov vrátilo pri jednorazovej kontrole HTTP 200 a parsovateľné XML. To nepotvrdzuje dokončenú integráciu, trvalé produkčné použitie ani pravidelnú obnovu údajov. Pravidelná synchronizácia zostáva vypnutá do potvrdenia podmienok a rozhodnutia majiteľa. Prístupové kľúče z URL sa do roadmapy neukladajú.
+
+#### DIAWIN
+
+- **Kontakt za dodávateľa:** Marcela Tlumačová, **+421 918 427 902**.
+- **Kontakt za klienta:** Ing. Milan Macháč.
+- **Overené:** `https://api.diawin.online/feed/inventory.xml` a `https://api.diawin.online/feed/google.xml`; každý obsahoval 658 položiek/variantov. Identifikátory, veľkosti a dostupnosť sú prítomné; skladový feed má aj šírky, množstvá a dnešný čas generovania. Chýbajú ceny a fotografie, popisy sú stručné.
+- [ ] Doplniť zdroj predajných cien, fotografií a podrobných popisov, prípadne kompletný produktový feed.
+- [ ] Potvrdiť frekvenciu obnovovania zásob a povolený interval načítavania; dnešný čas generovania nie je zárukou aktuálnosti zdrojových zásob.
+- [ ] Overiť párovanie doplnených údajov s existujúcim importom a produktovými variantmi.
+
+#### SIDAS
+
+- **Overené:** 222 produktov a 831 vnorených variantov; kódy, sklad, dostupnosť, aktivita a ceny MOC v EUR s DPH aj bez DPH.
+- **Chýba:** kompletné produktové názvy, popisy a parametre veľkostí; fotografie sú len ojedinelé.
+- [ ] Vyžiadať kompletný produktový export alebo doplňujúce podklady a mapovanie veľkostí.
+- [ ] Potvrdiť priebežnú obnovu cien a skladu: HTTP Last-Modified uvádza 4. 9. 2026. Samotná hlavička nedokazuje zastarané zásoby.
+- [ ] Potvrdiť význam MOC a pravidlá použitia predajných cien.
+
+#### ANTIPLESS
+
+- **Overené:** 25 produktov a 474 variantov; názvy, popisy, obrázky, kategórie, parametre, kódy/EAN, skladové množstvá a predajné aj nákupné cenové polia.
+- [ ] Potvrdiť úplnosť dohodnutého sortimentu pre SIMSAJ.sk.
+- [ ] Potvrdiť pole pre predajnú cenu a význam nákupných cien a údajov o DPH; príznaky nezamieňať s peňažnými sumami.
+- [ ] Pripraviť mapovanie variantov a kategórií a overiť skúšobný import.
+
+#### SVORTO
+
+- **Overené:** 160 produktov a 594 variantov; názvy, popisy, obrázky, veľkosti, EAN, veľkoobchodné a základné ceny a dostupnosť.
+- [ ] Potvrdiť pole pre predajnú cenu, význam poľa RATE (vo vzorke hodnota 20) a aktuálnosť daňových údajov.
+- [ ] Potvrdiť úplnosť sortimentu a význam skladových intervalov 10–50 či 100+; nezobrazovať ich ako presné počty kusov.
+- [ ] Overiť mapovanie na existujúci import a ochranu redakčných úprav.
+
+#### Spoločné podmienky pred spustením
+
+- [ ] Potvrdiť trvalé produkčné použitie adries, povolenie automatického načítavania, frekvenciu obnovovania a povolený interval sťahovania u všetkých štyroch dodávateľov.
+- [ ] Potvrdiť používanie fotografií a textov a prípadné ďalšie zmluvné alebo prístupové podmienky.
+- [ ] Otestovať prvotný import aj opakovanú synchronizáciu, ceny, varianty, vypredané a odstránené položky, výpadky feedov a ochranu ručných úprav.
+- [ ] Schváliť finálne produktové karty a ceny a až následne rozhodnúť o zapnutí pravidelných synchronizácií a ostrého predaja.
 
 ## Fáza 4 – Špeciálne funkcie SIMSAJ
 
